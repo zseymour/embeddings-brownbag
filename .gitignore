@@ -1,0 +1,4 @@
+# dissertation sources stay local; see talk/references.md for pointers
+.work/
+Dissertation/
+.DS_Store

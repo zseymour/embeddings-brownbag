@@ -1,0 +1,17 @@
+{
+  "crop_size": 320,
+  "images": {
+    "A": "kcca-poodle-query.jpg (poodle)",
+    "B": "kcca-amigurumi-query.jpg (bird)"
+  },
+  "correlations": {
+    "magA_phaseB__vs__A": 0.02051032167078314,
+    "magA_phaseB__vs__B": 0.687536454088586,
+    "magB_phaseA__vs__A": 0.7361918026221789,
+    "magB_phaseA__vs__B": 0.005117907480760145
+  },
+  "phase_donor_wins": {
+    "magA_phaseB_correlates_more_with_B": true,
+    "magB_phaseA_correlates_more_with_A": true
+  }
+}

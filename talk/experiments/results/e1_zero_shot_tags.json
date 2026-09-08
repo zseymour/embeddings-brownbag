@@ -1,0 +1,1572 @@
+{
+  "meta": {
+    "vocab_file": "results/mirflickr_vocab.txt",
+    "vocab_size": 1386,
+    "vocab_provenance": "verbatim from mirflickr/doc/common_tags.txt inside mirflickr25k.zip (1386 tags, one per line in the file's own frequency order)",
+    "seed": 0,
+    "templates": [
+      "a photo of {tag}",
+      "bare tag"
+    ],
+    "figure_template": "a photo of {tag}",
+    "figure_model": "clip-vit-b-32-openai",
+    "figure_path": "public/figures/exp-e1-zero-shot-tags.png",
+    "owl_rank_figure_path": "public/figures/exp-e1-owl-rank-vs-scale.png"
+  },
+  "models": {
+    "clip-vit-b-32-openai": {
+      "arch": "ViT-B-32-quickgelu",
+      "pretrained": "openai",
+      "device": "mps",
+      "num_parameters": 151277313,
+      "templates": {
+        "a photo of {tag}": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.3038
+              ],
+              [
+                "poodle",
+                0.2844
+              ],
+              [
+                "dogs",
+                0.2731
+              ],
+              [
+                "puppies",
+                0.2662
+              ],
+              [
+                "pets",
+                0.2622
+              ],
+              [
+                "golden",
+                0.2513
+              ],
+              [
+                "love",
+                0.2496
+              ],
+              [
+                "24hoursofflickr",
+                0.247
+              ],
+              [
+                "dog",
+                0.2465
+              ],
+              [
+                "two",
+                0.2461
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 63,
+              "dog": 9,
+              "poodle": 2,
+              "standard": 434,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.3229
+              ],
+              [
+                "crochet",
+                0.2962
+              ],
+              [
+                "duck",
+                0.2794
+              ],
+              [
+                "knit",
+                0.2764
+              ],
+              [
+                "yarn",
+                0.2708
+              ],
+              [
+                "yellow",
+                0.2569
+              ],
+              [
+                "bird",
+                0.2545
+              ],
+              [
+                "knitting",
+                0.2533
+              ],
+              [
+                "hat",
+                0.2498
+              ],
+              [
+                "crane",
+                0.2466
+              ]
+            ],
+            "top5_hits": [
+              "crochet"
+            ],
+            "top5_hit_count": 1,
+            "ground_truth_ranks": {
+              "yellow": 6,
+              "bird": 7,
+              "handmade": 11,
+              "crochet": 2,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "collection",
+                0.2848
+              ],
+              [
+                "crafts",
+                0.2743
+              ],
+              [
+                "handmade",
+                0.2691
+              ],
+              [
+                "decoration",
+                0.2569
+              ],
+              [
+                "display",
+                0.2569
+              ],
+              [
+                "shop",
+                0.2568
+              ],
+              [
+                "homemade",
+                0.2556
+              ],
+              [
+                "store",
+                0.2555
+              ],
+              [
+                "etsy",
+                0.2548
+              ],
+              [
+                "diy",
+                0.2537
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 625,
+              "pink": 80,
+              "home": 12,
+              "studio": 43,
+              "owl": 1013
+            }
+          }
+        },
+        "bare tag": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.3007
+              ],
+              [
+                "poodle",
+                0.2649
+              ],
+              [
+                "puppies",
+                0.2585
+              ],
+              [
+                "dogs",
+                0.2534
+              ],
+              [
+                "puppy",
+                0.2417
+              ],
+              [
+                "dog",
+                0.2372
+              ],
+              [
+                "pets",
+                0.2353
+              ],
+              [
+                "friends",
+                0.2338
+              ],
+              [
+                "friend",
+                0.2334
+              ],
+              [
+                "couple",
+                0.2321
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 740,
+              "dog": 6,
+              "poodle": 2,
+              "standard": 480,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.3185
+              ],
+              [
+                "duck",
+                0.2836
+              ],
+              [
+                "crochet",
+                0.2832
+              ],
+              [
+                "yarn",
+                0.2637
+              ],
+              [
+                "knitting",
+                0.2636
+              ],
+              [
+                "bird",
+                0.2565
+              ],
+              [
+                "knit",
+                0.2495
+              ],
+              [
+                "hat",
+                0.2483
+              ],
+              [
+                "yellow",
+                0.2472
+              ],
+              [
+                "etsy",
+                0.2469
+              ]
+            ],
+            "top5_hits": [
+              "crochet"
+            ],
+            "top5_hit_count": 1,
+            "ground_truth_ranks": {
+              "yellow": 9,
+              "bird": 6,
+              "handmade": 13,
+              "crochet": 3,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "collection",
+                0.2631
+              ],
+              [
+                "store",
+                0.2573
+              ],
+              [
+                "decoration",
+                0.2499
+              ],
+              [
+                "blogged",
+                0.2448
+              ],
+              [
+                "etsy",
+                0.2443
+              ],
+              [
+                "shop",
+                0.2443
+              ],
+              [
+                "display",
+                0.2437
+              ],
+              [
+                "handmade",
+                0.243
+              ],
+              [
+                "creativecommons",
+                0.2426
+              ],
+              [
+                "design",
+                0.2423
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 227,
+              "pink": 58,
+              "home": 30,
+              "studio": 52,
+              "owl": 971
+            }
+          }
+        }
+      }
+    },
+    "siglip-vit-b-16-webli": {
+      "arch": "ViT-B-16-SigLIP",
+      "pretrained": "webli",
+      "device": "mps",
+      "num_parameters": 203155970,
+      "templates": {
+        "a photo of {tag}": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.1087
+              ],
+              [
+                "poodle",
+                0.1
+              ],
+              [
+                "dogs",
+                0.095
+              ],
+              [
+                "puppies",
+                0.0794
+              ],
+              [
+                "pets",
+                0.0791
+              ],
+              [
+                "pet",
+                0.0724
+              ],
+              [
+                "golden",
+                0.0701
+              ],
+              [
+                "dog",
+                0.0694
+              ],
+              [
+                "animals",
+                0.066
+              ],
+              [
+                "two",
+                0.0651
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 53,
+              "dog": 8,
+              "poodle": 2,
+              "standard": 583,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.0945
+              ],
+              [
+                "crochet",
+                0.0705
+              ],
+              [
+                "duck",
+                0.0615
+              ],
+              [
+                "kawaii",
+                0.0503
+              ],
+              [
+                "yellow",
+                0.0492
+              ],
+              [
+                "toy",
+                0.0466
+              ],
+              [
+                "chicken",
+                0.0417
+              ],
+              [
+                "cute",
+                0.0388
+              ],
+              [
+                "knit",
+                0.0374
+              ],
+              [
+                "blogged",
+                0.0348
+              ]
+            ],
+            "top5_hits": [
+              "crochet",
+              "yellow"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "yellow": 5,
+              "bird": 60,
+              "handmade": 21,
+              "crochet": 2,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "diy",
+                0.0791
+              ],
+              [
+                "vintage",
+                0.0775
+              ],
+              [
+                "handmade",
+                0.0757
+              ],
+              [
+                "collection",
+                0.0754
+              ],
+              [
+                "retro",
+                0.0717
+              ],
+              [
+                "crafts",
+                0.0689
+              ],
+              [
+                "blogged",
+                0.0624
+              ],
+              [
+                "craft",
+                0.0619
+              ],
+              [
+                "etsy",
+                0.0616
+              ],
+              [
+                "viaje",
+                0.0531
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 143,
+              "pink": 359,
+              "home": 642,
+              "studio": 62,
+              "owl": 18
+            }
+          }
+        },
+        "bare tag": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.1042
+              ],
+              [
+                "poodle",
+                0.0941
+              ],
+              [
+                "dogs",
+                0.0856
+              ],
+              [
+                "pets",
+                0.0734
+              ],
+              [
+                "puppies",
+                0.0715
+              ],
+              [
+                "pet",
+                0.0711
+              ],
+              [
+                "dog",
+                0.0656
+              ],
+              [
+                "golden",
+                0.0564
+              ],
+              [
+                "perro",
+                0.0524
+              ],
+              [
+                "home",
+                0.0519
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 241,
+              "dog": 7,
+              "poodle": 2,
+              "standard": 1282,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.0977
+              ],
+              [
+                "duck",
+                0.0925
+              ],
+              [
+                "crochet",
+                0.0702
+              ],
+              [
+                "cute",
+                0.0625
+              ],
+              [
+                "chicken",
+                0.0597
+              ],
+              [
+                "kawaii",
+                0.0517
+              ],
+              [
+                "yellow",
+                0.0515
+              ],
+              [
+                "head",
+                0.0498
+              ],
+              [
+                "yarn",
+                0.0481
+              ],
+              [
+                "knit",
+                0.0454
+              ]
+            ],
+            "top5_hits": [
+              "crochet"
+            ],
+            "top5_hit_count": 1,
+            "ground_truth_ranks": {
+              "yellow": 7,
+              "bird": 18,
+              "handmade": 36,
+              "crochet": 3,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "diy",
+                0.0803
+              ],
+              [
+                "craft",
+                0.0774
+              ],
+              [
+                "crafts",
+                0.0761
+              ],
+              [
+                "collection",
+                0.0665
+              ],
+              [
+                "blogged",
+                0.0652
+              ],
+              [
+                "handmade",
+                0.063
+              ],
+              [
+                "owl",
+                0.0629
+              ],
+              [
+                "vintage",
+                0.0624
+              ],
+              [
+                "catchycolors",
+                0.062
+              ],
+              [
+                "sewing",
+                0.058
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 121,
+              "pink": 59,
+              "home": 29,
+              "studio": 331,
+              "owl": 7
+            }
+          }
+        }
+      }
+    },
+    "clip-vit-l-14-openai": {
+      "arch": "ViT-L-14-quickgelu",
+      "pretrained": "openai",
+      "device": "mps",
+      "num_parameters": 427616513,
+      "templates": {
+        "a photo of {tag}": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.302
+              ],
+              [
+                "poodle",
+                0.2522
+              ],
+              [
+                "dogs",
+                0.2408
+              ],
+              [
+                "pets",
+                0.2264
+              ],
+              [
+                "puppies",
+                0.2124
+              ],
+              [
+                "dog",
+                0.2124
+              ],
+              [
+                "two",
+                0.2026
+              ],
+              [
+                "pink",
+                0.2014
+              ],
+              [
+                "red",
+                0.2012
+              ],
+              [
+                "2",
+                0.2009
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 9,
+              "dog": 6,
+              "poodle": 2,
+              "standard": 45,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.2646
+              ],
+              [
+                "crochet",
+                0.2592
+              ],
+              [
+                "handmade",
+                0.2185
+              ],
+              [
+                "duck",
+                0.2163
+              ],
+              [
+                "etsy",
+                0.2115
+              ],
+              [
+                "knit",
+                0.2101
+              ],
+              [
+                "kawaii",
+                0.2085
+              ],
+              [
+                "flickrgrouproulette",
+                0.2073
+              ],
+              [
+                "chicken",
+                0.2026
+              ],
+              [
+                "homemade",
+                0.2013
+              ]
+            ],
+            "top5_hits": [
+              "crochet",
+              "handmade"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "yellow": 12,
+              "bird": 21,
+              "handmade": 3,
+              "crochet": 2,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "crafts",
+                0.2446
+              ],
+              [
+                "vignette",
+                0.2274
+              ],
+              [
+                "etsy",
+                0.2213
+              ],
+              [
+                "blogged",
+                0.2203
+              ],
+              [
+                "collection",
+                0.2195
+              ],
+              [
+                "handmade",
+                0.2185
+              ],
+              [
+                "craft",
+                0.2135
+              ],
+              [
+                "decoration",
+                0.2043
+              ],
+              [
+                "sewing",
+                0.202
+              ],
+              [
+                "owl",
+                0.1994
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 180,
+              "pink": 53,
+              "home": 265,
+              "studio": 66,
+              "owl": 10
+            }
+          }
+        },
+        "bare tag": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.2872
+              ],
+              [
+                "poodle",
+                0.2251
+              ],
+              [
+                "dogs",
+                0.2207
+              ],
+              [
+                "puppies",
+                0.201
+              ],
+              [
+                "couple",
+                0.1968
+              ],
+              [
+                "dog",
+                0.1895
+              ],
+              [
+                "pet",
+                0.1884
+              ],
+              [
+                "pentaxk10d",
+                0.188
+              ],
+              [
+                "dutch",
+                0.1877
+              ],
+              [
+                "image",
+                0.187
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 179,
+              "dog": 6,
+              "poodle": 2,
+              "standard": 531,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.2514
+              ],
+              [
+                "crochet",
+                0.232
+              ],
+              [
+                "duck",
+                0.2282
+              ],
+              [
+                "toy",
+                0.2157
+              ],
+              [
+                "chicken",
+                0.2031
+              ],
+              [
+                "etsy",
+                0.2012
+              ],
+              [
+                "handmade",
+                0.2007
+              ],
+              [
+                "bird",
+                0.1954
+              ],
+              [
+                "flickrgrouproulette",
+                0.1926
+              ],
+              [
+                "knitting",
+                0.1914
+              ]
+            ],
+            "top5_hits": [
+              "crochet"
+            ],
+            "top5_hit_count": 1,
+            "ground_truth_ranks": {
+              "yellow": 26,
+              "bird": 8,
+              "handmade": 7,
+              "crochet": 2,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "etsy",
+                0.2165
+              ],
+              [
+                "blogged",
+                0.2057
+              ],
+              [
+                "crafts",
+                0.2049
+              ],
+              [
+                "handmade",
+                0.2019
+              ],
+              [
+                "collection",
+                0.1924
+              ],
+              [
+                "craft",
+                0.1919
+              ],
+              [
+                "colores",
+                0.1912
+              ],
+              [
+                "decoration",
+                0.1869
+              ],
+              [
+                "travel",
+                0.186
+              ],
+              [
+                "vignette",
+                0.1849
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 38,
+              "pink": 98,
+              "home": 77,
+              "studio": 31,
+              "owl": 26
+            }
+          }
+        }
+      }
+    },
+    "siglip-so400m-webli": {
+      "arch": "ViT-SO400M-14-SigLIP",
+      "pretrained": "webli",
+      "device": "mps",
+      "num_parameters": 877360306,
+      "templates": {
+        "a photo of {tag}": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.1525
+              ],
+              [
+                "poodle",
+                0.1237
+              ],
+              [
+                "dogs",
+                0.1038
+              ],
+              [
+                "pet",
+                0.0971
+              ],
+              [
+                "puppies",
+                0.0945
+              ],
+              [
+                "sitting",
+                0.0913
+              ],
+              [
+                "kiss",
+                0.0906
+              ],
+              [
+                "pets",
+                0.0884
+              ],
+              [
+                "cute",
+                0.0854
+              ],
+              [
+                "knit",
+                0.0853
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 12,
+              "dog": 29,
+              "poodle": 2,
+              "standard": 58,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.1278
+              ],
+              [
+                "kawaii",
+                0.0951
+              ],
+              [
+                "crochet",
+                0.0932
+              ],
+              [
+                "knit",
+                0.068
+              ],
+              [
+                "duck",
+                0.0675
+              ],
+              [
+                "craft",
+                0.065
+              ],
+              [
+                "cute",
+                0.0624
+              ],
+              [
+                "babileta",
+                0.0612
+              ],
+              [
+                "chicken",
+                0.0603
+              ],
+              [
+                "soft",
+                0.059
+              ]
+            ],
+            "top5_hits": [
+              "crochet"
+            ],
+            "top5_hit_count": 1,
+            "ground_truth_ranks": {
+              "yellow": 15,
+              "bird": 13,
+              "handmade": 19,
+              "crochet": 3,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "handmade",
+                0.1154
+              ],
+              [
+                "vintage",
+                0.1079
+              ],
+              [
+                "collection",
+                0.1073
+              ],
+              [
+                "retro",
+                0.107
+              ],
+              [
+                "crafts",
+                0.1052
+              ],
+              [
+                "diy",
+                0.1047
+              ],
+              [
+                "craft",
+                0.1026
+              ],
+              [
+                "catchycolors",
+                0.089
+              ],
+              [
+                "homemade",
+                0.0889
+              ],
+              [
+                "display",
+                0.0885
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 68,
+              "pink": 34,
+              "home": 501,
+              "studio": 113,
+              "owl": 20
+            }
+          }
+        },
+        "bare tag": {
+          "poodle": {
+            "label": "poodle",
+            "ground_truth": [
+              "red",
+              "dog",
+              "poodle",
+              "standard",
+              "standardpoodle"
+            ],
+            "top10": [
+              [
+                "standardpoodle",
+                0.1494
+              ],
+              [
+                "poodle",
+                0.1332
+              ],
+              [
+                "dogs",
+                0.1067
+              ],
+              [
+                "puppies",
+                0.0993
+              ],
+              [
+                "pet",
+                0.0887
+              ],
+              [
+                "dog",
+                0.0876
+              ],
+              [
+                "sitting",
+                0.0867
+              ],
+              [
+                "pets",
+                0.0854
+              ],
+              [
+                "long",
+                0.0799
+              ],
+              [
+                "old",
+                0.0791
+              ]
+            ],
+            "top5_hits": [
+              "standardpoodle",
+              "poodle"
+            ],
+            "top5_hit_count": 2,
+            "ground_truth_ranks": {
+              "red": 106,
+              "dog": 6,
+              "poodle": 2,
+              "standard": 841,
+              "standardpoodle": 1
+            }
+          },
+          "amigurumi": {
+            "label": "bird",
+            "ground_truth": [
+              "yellow",
+              "bird",
+              "handmade",
+              "crochet",
+              "amigurimi"
+            ],
+            "top10": [
+              [
+                "amigurumi",
+                0.1318
+              ],
+              [
+                "duck",
+                0.123
+              ],
+              [
+                "crochet",
+                0.1002
+              ],
+              [
+                "chicken",
+                0.0935
+              ],
+              [
+                "kawaii",
+                0.0921
+              ],
+              [
+                "cute",
+                0.0902
+              ],
+              [
+                "adorable",
+                0.0818
+              ],
+              [
+                "bird",
+                0.0801
+              ],
+              [
+                "kitty",
+                0.0729
+              ],
+              [
+                "babileta",
+                0.0725
+              ]
+            ],
+            "top5_hits": [
+              "crochet"
+            ],
+            "top5_hit_count": 1,
+            "ground_truth_ranks": {
+              "yellow": 18,
+              "bird": 8,
+              "handmade": 109,
+              "crochet": 3,
+              "amigurimi": null
+            }
+          },
+          "failure": {
+            "label": "owl",
+            "ground_truth": [
+              "green",
+              "pink",
+              "home",
+              "studio",
+              "owl"
+            ],
+            "top10": [
+              [
+                "crafts",
+                0.1151
+              ],
+              [
+                "craft",
+                0.1124
+              ],
+              [
+                "vintage",
+                0.1043
+              ],
+              [
+                "handmade",
+                0.1015
+              ],
+              [
+                "catchycolors",
+                0.1009
+              ],
+              [
+                "diy",
+                0.1005
+              ],
+              [
+                "collection",
+                0.0969
+              ],
+              [
+                "felt",
+                0.0964
+              ],
+              [
+                "decoration",
+                0.0945
+              ],
+              [
+                "etsy",
+                0.0893
+              ]
+            ],
+            "top5_hits": [],
+            "top5_hit_count": 0,
+            "ground_truth_ranks": {
+              "green": 151,
+              "pink": 53,
+              "home": 25,
+              "studio": 65,
+              "owl": 17
+            }
+          }
+        }
+      }
+    }
+  }
+}

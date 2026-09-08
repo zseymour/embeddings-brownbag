@@ -1,0 +1,38 @@
+/* Seriph treats the paragraph after an h1 as a dim subtitle. Keep that on
+   section and fact slides; content slides need the first paragraph at full
+   weight and a larger body size for a room. */
+.slidev-layout.default,
+.slidev-layout.two-cols,
+.slidev-layout.center {
+  font-size: 1.35rem;
+}
+
+.slidev-layout.default h1 + p,
+.slidev-layout.two-cols h1 + p {
+  opacity: 1;
+  margin-top: 1rem;
+}
+
+.slidev-layout p {
+  line-height: 1.45;
+}
+
+.slidev-layout blockquote {
+  font-size: 1.3rem;
+  padding: 0.5em 1em;
+  border-left-width: 4px;
+}
+
+.slidev-layout.fact h1 + p {
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.source {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 3.5rem;
+  font-size: 0.7rem;
+  opacity: 0.55;
+  letter-spacing: 0.01em;
+}

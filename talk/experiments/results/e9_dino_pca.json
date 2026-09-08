@@ -1,0 +1,388 @@
+{
+  "model": "facebook/dinov2-base",
+  "hidden_dim": 768,
+  "device": "mps",
+  "seed": 0,
+  "dino_input_size": 896,
+  "patch_size": 14,
+  "patch_grid": [
+    64,
+    64
+  ],
+  "crops": {
+    "nordland": {
+      "source": "saane-retrieval-nordland.png",
+      "query_bbox_xyxy": [
+        91,
+        0,
+        695,
+        600
+      ],
+      "semseg_bbox_xyxy": [
+        1450,
+        13,
+        2055,
+        618
+      ],
+      "query_crop_size": [
+        605,
+        601
+      ],
+      "semseg_crop_size": [
+        606,
+        606
+      ]
+    },
+    "robotcar": {
+      "source": "saane-retrieval-robotcar.png",
+      "query_bbox_xyxy": [
+        91,
+        202,
+        695,
+        807
+      ],
+      "semseg_bbox_xyxy": [
+        1450,
+        199,
+        2055,
+        803
+      ],
+      "query_crop_size": [
+        605,
+        606
+      ],
+      "semseg_crop_size": [
+        606,
+        605
+      ]
+    },
+    "supp4": {
+      "source": "saane-supp-4.png",
+      "query_bbox_xyxy": [
+        91,
+        0,
+        695,
+        603
+      ],
+      "semseg_bbox_xyxy": [
+        1450,
+        0,
+        2055,
+        603
+      ],
+      "query_crop_size": [
+        605,
+        604
+      ],
+      "semseg_crop_size": [
+        606,
+        604
+      ]
+    }
+  },
+  "panel_detection": {
+    "method": "connected components on non-white pixels (any RGB channel < threshold)",
+    "white_threshold": 245,
+    "min_panel_area_px": 20000
+  },
+  "pca_per_frame": {
+    "description": "3-component PCA fit independently on each frame's own patch features (no cross-frame join, no foreground/background threshold - every patch is shown).",
+    "explained_variance_ratio_pc1_pc2_pc3": {
+      "nordland": [
+        0.16509041832236337,
+        0.10881250594861812,
+        0.0951844688294206
+      ],
+      "robotcar": [
+        0.1414137433881607,
+        0.09315653946888747,
+        0.08050548455393752
+      ],
+      "supp4": [
+        0.12078715926294438,
+        0.10422683782998853,
+        0.08985414981277504
+      ]
+    },
+    "normalisation": "per-component min-max to [0, 1] over that frame's own patches"
+  },
+  "kmeans_joint": {
+    "description": "k-means (k=6) on L2-normalised patch features, fit jointly over all 3 frames' patches so a cluster id has the same fixed colour in every frame.",
+    "n_clusters": 6,
+    "seed": 0,
+    "n_init": 10,
+    "max_iter": 200,
+    "inertia": 8122.565093997234,
+    "palette_rgb": [
+      [
+        124,
+        196,
+        255
+      ],
+      [
+        232,
+        137,
+        74
+      ],
+      [
+        52,
+        211,
+        153
+      ],
+      [
+        242,
+        214,
+        90
+      ],
+      [
+        199,
+        146,
+        234
+      ],
+      [
+        255,
+        107,
+        129
+      ]
+    ]
+  },
+  "segmentation_classes": {
+    "description": "2018 segmentation panels resized to the GRID x GRID patch grid (nearest neighbour); colours merged across all 3 frames (Euclidean RGB distance <= 40) into one shared class palette.",
+    "merge_distance": 40,
+    "n_classes": 12,
+    "canonical_class_rgb": [
+      [
+        140,
+        140,
+        140
+      ],
+      [
+        6,
+        230,
+        230
+      ],
+      [
+        180,
+        120,
+        120
+      ],
+      [
+        4,
+        200,
+        3
+      ],
+      [
+        143,
+        255,
+        140
+      ],
+      [
+        120,
+        120,
+        70
+      ],
+      [
+        0,
+        102,
+        200
+      ],
+      [
+        4,
+        250,
+        7
+      ],
+      [
+        235,
+        255,
+        7
+      ],
+      [
+        50,
+        234,
+        234
+      ],
+      [
+        202,
+        161,
+        161
+      ],
+      [
+        79,
+        216,
+        79
+      ]
+    ]
+  },
+  "cluster_purity_vs_2018_segmentation": {
+    "nordland": {
+      "per_cluster": [
+        {
+          "cluster": 0,
+          "size": 737,
+          "majority_class": 1,
+          "purity": 0.4355495251017639,
+          "mean_row": 27.76797829036635,
+          "mean_col": 33.25101763907734
+        },
+        {
+          "cluster": 1,
+          "size": 21,
+          "majority_class": 2,
+          "purity": 0.7142857142857143,
+          "mean_row": 56.76190476190476,
+          "mean_col": 30.19047619047619
+        },
+        {
+          "cluster": 2,
+          "size": 648,
+          "majority_class": 1,
+          "purity": 0.9398148148148148,
+          "mean_row": 8.324074074074074,
+          "mean_col": 31.507716049382715
+        },
+        {
+          "cluster": 3,
+          "size": 650,
+          "majority_class": 4,
+          "purity": 0.41384615384615386,
+          "mean_row": 21.372307692307693,
+          "mean_col": 36.06
+        },
+        {
+          "cluster": 4,
+          "size": 1480,
+          "majority_class": 2,
+          "purity": 0.3716216216216216,
+          "mean_row": 45.50135135135135,
+          "mean_col": 37.456756756756754
+        },
+        {
+          "cluster": 5,
+          "size": 560,
+          "majority_class": 2,
+          "purity": 0.8178571428571428,
+          "mean_row": 37.03392857142857,
+          "mean_col": 8.2
+        }
+      ],
+      "frame_purity": 0.54248046875
+    },
+    "robotcar": {
+      "per_cluster": [
+        {
+          "cluster": 0,
+          "size": 721,
+          "majority_class": 0,
+          "purity": 0.2801664355062413,
+          "mean_row": 23.855755894590846,
+          "mean_col": 33.11511789181692
+        },
+        {
+          "cluster": 1,
+          "size": 1478,
+          "majority_class": 0,
+          "purity": 0.8058186738836265,
+          "mean_row": 49.21989174560216,
+          "mean_col": 32.67523680649526
+        },
+        {
+          "cluster": 2,
+          "size": 18,
+          "majority_class": 1,
+          "purity": 0.9444444444444444,
+          "mean_row": 8.88888888888889,
+          "mean_col": 33.05555555555556
+        },
+        {
+          "cluster": 3,
+          "size": 1258,
+          "majority_class": 2,
+          "purity": 0.4578696343402226,
+          "mean_row": 14.943561208267091,
+          "mean_col": 32.35850556438792
+        },
+        {
+          "cluster": 4,
+          "size": 0,
+          "majority_class": null,
+          "purity": null,
+          "mean_row": null,
+          "mean_col": null
+        },
+        {
+          "cluster": 5,
+          "size": 621,
+          "majority_class": 0,
+          "purity": 0.3413848631239936,
+          "mean_row": 32.39613526570049,
+          "mean_col": 25.043478260869566
+        }
+      ],
+      "frame_purity": 0.53662109375
+    },
+    "supp4": {
+      "per_cluster": [
+        {
+          "cluster": 0,
+          "size": 695,
+          "majority_class": 1,
+          "purity": 0.4446043165467626,
+          "mean_row": 26.453237410071942,
+          "mean_col": 34.20719424460432
+        },
+        {
+          "cluster": 1,
+          "size": 1045,
+          "majority_class": 0,
+          "purity": 0.9368421052631579,
+          "mean_row": 51.066985645933016,
+          "mean_col": 34.67177033492823
+        },
+        {
+          "cluster": 2,
+          "size": 421,
+          "majority_class": 1,
+          "purity": 0.997624703087886,
+          "mean_row": 7.828978622327791,
+          "mean_col": 38.34679334916865
+        },
+        {
+          "cluster": 3,
+          "size": 1218,
+          "majority_class": 3,
+          "purity": 0.6830870279146142,
+          "mean_row": 20.813628899835795,
+          "mean_col": 28.660919540229884
+        },
+        {
+          "cluster": 4,
+          "size": 0,
+          "majority_class": null,
+          "purity": null,
+          "mean_row": null,
+          "mean_col": null
+        },
+        {
+          "cluster": 5,
+          "size": 717,
+          "majority_class": 5,
+          "purity": 0.3291492329149233,
+          "mean_row": 39.92608089260809,
+          "mean_col": 25.0557880055788
+        }
+      ],
+      "frame_purity": 0.677734375
+    }
+  },
+  "figures": {
+    "composite": "public/figures/exp-e9-dino-pca.png",
+    "standalone": [
+      "public/figures/exp-e9-dino-pca-nordland.png",
+      "public/figures/exp-e9-dino-pca-nordland-kmeans.png",
+      "public/figures/exp-e9-dino-pca-robotcar.png",
+      "public/figures/exp-e9-dino-pca-robotcar-kmeans.png",
+      "public/figures/exp-e9-dino-pca-supp4.png",
+      "public/figures/exp-e9-dino-pca-supp4-kmeans.png"
+    ]
+  }
+}

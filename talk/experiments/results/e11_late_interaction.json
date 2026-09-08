@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "dataset": "scifact",
+    "corpus_size": 5183,
+    "num_test_queries": 300,
+    "seed": 0,
+    "device": "cpu"
+  },
+  "single_vector": {
+    "meta": {
+      "model": "BAAI/bge-small-en-v1.5",
+      "dim": 384,
+      "n_docs": 5183,
+      "query_instruction": "Represent this sentence for searching relevant passages: ",
+      "scoring_formula": "cosine similarity = dot product of L2-normalised sentence embeddings (dim=384)",
+      "corpus_encode_seconds_total": 168.88116629199067
+    },
+    "storage": {
+      "representation": "one dense vector per document",
+      "dim": 384,
+      "n_docs": 5183,
+      "bytes_float32": 7961088,
+      "bytes_float16": 3980544
+    },
+    "latency": {
+      "query_encode": {
+        "n": 295,
+        "median_ms": 9.538041995256208,
+        "p95_ms": 12.502554307866378,
+        "mean_ms": 9.877994183156938
+      },
+      "corpus_scoring": {
+        "n": 295,
+        "median_ms": 0.12208300177007914,
+        "p95_ms": 0.15451240469701588,
+        "mean_ms": 0.12849390189068677
+      },
+      "warmup_queries_excluded": 5
+    },
+    "metrics": {
+      "ndcg_cut_10": 0.7127069247605036,
+      "recall_10": 0.8362222222222222,
+      "recall_100": 0.9416666666666667,
+      "mrr_cut_10": 0.6821931216931216,
+      "n_queries": 300,
+      "trec_eval_measures": [
+        "ndcg_cut_10",
+        "recall_10",
+        "recall_100"
+      ],
+      "mrr_cut_10_method": "recip_rank (pytrec_eval) on the run truncated to each query's top 10 documents; 0 if no relevant document is in the top 10"
+    }
+  },
+  "late_interaction": {
+    "meta": {
+      "model": "answerdotai/answerai-colbert-small-v1",
+      "via": "pylate.models.ColBERT + pylate.scores.colbert_scores",
+      "dim": 96,
+      "n_docs": 5183,
+      "document_length_tokens": 300,
+      "query_length_tokens": 32,
+      "query_augmentation": true,
+      "scoring_formula": "MaxSim = sum over query tokens of (max over document tokens of dot product), on L2-normalised token embeddings (dim=96); documents keep every non-punctuation token up to document_length after truncation; queries are padded/augmented with [MASK] to a fixed query_length and every position (real token or mask) participates in scoring",
+      "corpus_encode_seconds_total": 107.46317620899936
+    },
+    "storage": {
+      "representation": "one dense vector per surviving document token (post skiplist + truncation)",
+      "dim": 96,
+      "n_docs": 5183,
+      "total_token_vectors": 1221388,
+      "mean_tokens_per_doc": 235.6527107852595,
+      "max_tokens_per_doc": 290,
+      "min_tokens_per_doc": 50,
+      "bytes_float32": 469012992,
+      "bytes_float16": 234506496
+    },
+    "latency": {
+      "query_encode": {
+        "n": 295,
+        "median_ms": 9.044082995387726,
+        "p95_ms": 10.434774903114885,
+        "mean_ms": 9.193371193013864
+      },
+      "corpus_scoring": {
+        "n": 295,
+        "median_ms": 58.91074999817647,
+        "p95_ms": 74.86653330270202,
+        "mean_ms": 61.65337574577464
+      },
+      "warmup_queries_excluded": 5
+    },
+    "metrics": {
+      "ndcg_cut_10": 0.7455527012362625,
+      "recall_10": 0.8456666666666667,
+      "recall_100": 0.9560000000000001,
+      "mrr_cut_10": 0.7185039682539682,
+      "n_queries": 300,
+      "trec_eval_measures": [
+        "ndcg_cut_10",
+        "recall_10",
+        "recall_100"
+      ],
+      "mrr_cut_10_method": "recip_rank (pytrec_eval) on the run truncated to each query's top 10 documents; 0 if no relevant document is in the top 10"
+    }
+  },
+  "comparison": {
+    "storage_ratio_late_interaction_over_single_vector_float16": 58.913177696314875,
+    "storage_ratio_late_interaction_over_single_vector_float32": 58.913177696314875,
+    "scoring_latency_ratio_late_interaction_over_single_vector_median": 482.5467030137744,
+    "ndcg_cut_10_delta_late_interaction_minus_single_vector": 0.032845776475758925,
+    "late_interaction_beats_single_vector_ndcg10": true
+  }
+}

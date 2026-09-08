@@ -1,0 +1,919 @@
+{
+  "seed": 0,
+  "sources": {
+    "glove": {
+      "model": "glove-wiki-gigaword-300",
+      "dim": 300,
+      "vocab_size": 400000
+    },
+    "bge": {
+      "model": "BAAI/bge-small-en-v1.5",
+      "dim": 384
+    }
+  },
+  "candidate_vocabulary": {
+    "source_file": "talk/experiments/results/mirflickr_vocab.txt",
+    "size": 1386
+  },
+  "tag_sets": {
+    "poodle": {
+      "definition": {
+        "query_note": "red standard poodle; Flickr tags: red, dog, poodle, standard, standardpoodle",
+        "members": [
+          "red",
+          "dog",
+          "poodle",
+          "standard",
+          "standardpoodle"
+        ],
+        "colour_word": "red"
+      },
+      "glove": {
+        "members_present": [
+          "red",
+          "dog",
+          "poodle",
+          "standard",
+          "standardpoodle"
+        ],
+        "members_missing": [],
+        "candidate_vocab_size": 1156,
+        "candidate_vocab_skipped": 230,
+        "candidate_vocab_skipped_words": [
+          "abigfave",
+          "selfportrait",
+          "interestingness",
+          "i500",
+          "blackandwhite",
+          "365days",
+          "naturesfinest",
+          "impressedbeauty",
+          "diamondclassphotographer",
+          "anawesomeshot",
+          "supershot",
+          "flickrdiamond",
+          "streetart",
+          "strobist",
+          "longexposure",
+          "blueribbonwinner",
+          "newyorkcity",
+          "superbmasterpiece",
+          "400d",
+          "aplusphoto",
+          "flickrsbest",
+          "350d",
+          "project365",
+          "xpro",
+          "blackwhite",
+          "topf25",
+          "superaplus",
+          "nikonstunninggallery",
+          "holga",
+          "specanimal",
+          "nikond80",
+          "gothamist",
+          "searchthebest",
+          "nikond200",
+          "nikond50",
+          "atardecer",
+          "cameraphone",
+          "topv111",
+          "dflickr",
+          "nikond40",
+          "canoneos350d",
+          "sigma1020",
+          "k10d",
+          "buenosaires",
+          "30d",
+          "artlibre",
+          "canoneos400d",
+          "avianexcellence",
+          "unitedstates",
+          "crossprocessed",
+          "xti",
+          "photomatix",
+          "washingtondc",
+          "outstandingshots",
+          "blancoynegro",
+          "mediumformat",
+          "superhearts",
+          "amigurumi",
+          "ltytr1",
+          "wowiekazowie",
+          "newjersey",
+          "nightshot",
+          "platinumphoto",
+          "10faves",
+          "lomography",
+          "ilovenature",
+          "d70s",
+          "goldstaraward",
+          "360\u00b0",
+          "theperfectphotographer",
+          "topf50",
+          "canon400d",
+          "burningman",
+          "dcist",
+          "outdoorphotography",
+          "unitedkingdom",
+          "grdigital",
+          "bodylanguage",
+          "goldenphotographer",
+          "20d",
+          "delete2",
+          "biancoenero",
+          "wideangle",
+          "flickrexplore",
+          "canon30d",
+          "d40x",
+          "challengeyouwinner",
+          "save2",
+          "picnik",
+          "24hoursofflickr",
+          "newmexico",
+          "magicdonkey",
+          "d2x",
+          "ultimateshot",
+          "stilllife",
+          "newzealand",
+          "save3",
+          "catchycolors",
+          "chicagoist",
+          "15fav",
+          "firstquality",
+          "riodejaneiro",
+          "save4",
+          "tshirt",
+          "animalkingdomelite",
+          "southafrica",
+          "delete3",
+          "ysplix",
+          "guesswherelondon",
+          "creativecommons",
+          "shieldofexcellence",
+          "1855mm",
+          "enblend",
+          "delete4",
+          "squareformat",
+          "contraluz",
+          "novideo",
+          "100v10f",
+          "\u53f0\u7063",
+          "betterthangood",
+          "noiretblanc",
+          "denhaag",
+          "britishcolumbia",
+          "50mmf14",
+          "northcarolina",
+          "tenpositive",
+          "save5",
+          "stereographicprojection",
+          "510fav",
+          "pentaxk10d",
+          "thehague",
+          "save6",
+          "s\u00e3opaulo",
+          "specnature",
+          "thenetherlands",
+          "etringita",
+          "utatafeature",
+          "s3is",
+          "instantfave",
+          "canoneos30d",
+          "burningman2007",
+          "excellentphotographerawards",
+          "ritratto",
+          "lightpainting",
+          "sigma1020mm",
+          "mathmap",
+          "save7",
+          "crossprocessing",
+          "save8",
+          "abbandono",
+          "k100d",
+          "1025fav",
+          "canon350d",
+          "mywinners",
+          "\u65e5\u672c",
+          "cybershot",
+          "saopaulo",
+          "flickrgrouproulette",
+          "save10",
+          "stuckincustoms",
+          "savedbythedeltemeuncensoredgroup",
+          "delete5",
+          "delete10",
+          "fv5",
+          "naturalbeauty",
+          "ofme",
+          "actionfigure",
+          "bwdreams",
+          "canoneos40d",
+          "foundinsf",
+          "25faves",
+          "vision100",
+          "300d",
+          "\u0627\u064a\u0631\u0627\u0646",
+          "delete6",
+          "moblog",
+          "coneyisland",
+          "streetphotography",
+          "avision",
+          "peterbowers",
+          "faved",
+          "naturallight",
+          "timelapse",
+          "sb600",
+          "mholm",
+          "a640",
+          "bostonist",
+          "gwl",
+          "123bw",
+          "delete7",
+          "tiltshift",
+          "save9",
+          "\u0641\u0627\u0631\u0633\u06cc",
+          "standardpoodle",
+          "\u4e2d\u56fd",
+          "lakemichigan",
+          "lasvegas",
+          "1870mm",
+          "urbandecay",
+          "\u6771\u4eac",
+          "urbanfragments",
+          "carshow",
+          "babileta",
+          "eos350d",
+          "isawyoufirst",
+          "pasteup",
+          "1022mm",
+          "darkmatter",
+          "p1f1",
+          "flickrmeetup",
+          "bestofr",
+          "justpentax",
+          "expiredfilm",
+          "telaviv",
+          "18200mmf3556gvr",
+          "50mmf18",
+          "canon5d",
+          "awr",
+          "fv10",
+          "tonivc",
+          "geo:tool=gmif",
+          "\u0627\u06cc\u0631\u0627\u0646\u06cc\u0627\u0646",
+          "hoodriver",
+          "zuiko",
+          "rebelxt",
+          "mywinner",
+          "sb800",
+          "delete8",
+          "nycpb",
+          "\u53f0\u5317"
+        ],
+        "top10_nearest_vocab_tags": [
+          {
+            "word": "poodle",
+            "cosine": 0.7108523038791519
+          },
+          {
+            "word": "standard",
+            "cosine": 0.6684545871388016
+          },
+          {
+            "word": "dog",
+            "cosine": 0.6532314849470608
+          },
+          {
+            "word": "dogs",
+            "cosine": 0.5269358740529079
+          },
+          {
+            "word": "cat",
+            "cosine": 0.5231408646971488
+          },
+          {
+            "word": "red",
+            "cosine": 0.5105556819360721
+          },
+          {
+            "word": "blue",
+            "cosine": 0.5031556943446087
+          },
+          {
+            "word": "yellow",
+            "cosine": 0.4532937720890493
+          },
+          {
+            "word": "pet",
+            "cosine": 0.4510777792464505
+          },
+          {
+            "word": "miniature",
+            "cosine": 0.4412191331658144
+          }
+        ],
+        "top10_nearest_vocab_tags_excluding_colour_word": [
+          {
+            "word": "poodle",
+            "cosine": 0.7892104929558492
+          },
+          {
+            "word": "standard",
+            "cosine": 0.6874435213495392
+          },
+          {
+            "word": "dog",
+            "cosine": 0.650767949779042
+          },
+          {
+            "word": "cat",
+            "cosine": 0.5204764492519588
+          },
+          {
+            "word": "dogs",
+            "cosine": 0.512657782944262
+          },
+          {
+            "word": "pet",
+            "cosine": 0.4697638518337663
+          },
+          {
+            "word": "puppy",
+            "cosine": 0.45828483731481334
+          },
+          {
+            "word": "miniature",
+            "cosine": 0.43090395853598845
+          },
+          {
+            "word": "toy",
+            "cosine": 0.407319688818437
+          },
+          {
+            "word": "pets",
+            "cosine": 0.3968514189791963
+          }
+        ],
+        "colour_word_excluded": "red",
+        "avg_cosine_mean_to_own_members": 0.6357735144752716,
+        "median_cosine_mean_to_other_vocab_tags": 0.12918013487270236,
+        "gap_member_minus_other_median": 0.5065933796025692,
+        "vector_notes": {
+          "standardpoodle": "not in GloVe vocab; used mean of subword split 'standard' + 'poodle'"
+        }
+      },
+      "bge": {
+        "members_present": [
+          "red",
+          "dog",
+          "poodle",
+          "standard",
+          "standardpoodle"
+        ],
+        "members_missing": [],
+        "candidate_vocab_size": 1386,
+        "candidate_vocab_skipped": 0,
+        "candidate_vocab_skipped_words": [],
+        "top10_nearest_vocab_tags": [
+          {
+            "word": "dog",
+            "cosine": 0.8507363386618151
+          },
+          {
+            "word": "standardpoodle",
+            "cosine": 0.84936662255989
+          },
+          {
+            "word": "standard",
+            "cosine": 0.8414775099197804
+          },
+          {
+            "word": "poodle",
+            "cosine": 0.832393437614245
+          },
+          {
+            "word": "animal",
+            "cosine": 0.829030633795095
+          },
+          {
+            "word": "pet",
+            "cosine": 0.8240487781074042
+          },
+          {
+            "word": "red",
+            "cosine": 0.808930651924742
+          },
+          {
+            "word": "duck",
+            "cosine": 0.8008951719110573
+          },
+          {
+            "word": "puppy",
+            "cosine": 0.798592252715038
+          },
+          {
+            "word": "brown",
+            "cosine": 0.785117973422823
+          }
+        ],
+        "top10_nearest_vocab_tags_excluding_colour_word": [
+          {
+            "word": "standardpoodle",
+            "cosine": 0.8805467668384483
+          },
+          {
+            "word": "dog",
+            "cosine": 0.8510348067374465
+          },
+          {
+            "word": "standard",
+            "cosine": 0.8474601698750095
+          },
+          {
+            "word": "poodle",
+            "cosine": 0.8457693793261462
+          },
+          {
+            "word": "pet",
+            "cosine": 0.8254673129076845
+          },
+          {
+            "word": "animal",
+            "cosine": 0.8214966262438026
+          },
+          {
+            "word": "puppy",
+            "cosine": 0.8039168483106506
+          },
+          {
+            "word": "duck",
+            "cosine": 0.7969986287187857
+          },
+          {
+            "word": "pets",
+            "cosine": 0.7802172363256769
+          },
+          {
+            "word": "dogs",
+            "cosine": 0.778594265444005
+          }
+        ],
+        "colour_word_excluded": "red",
+        "avg_cosine_mean_to_own_members": 0.8365809121360945,
+        "median_cosine_mean_to_other_vocab_tags": 0.6662356432397455,
+        "gap_member_minus_other_median": 0.17034526889634904
+      }
+    },
+    "bird": {
+      "definition": {
+        "query_note": "yellow crochet bird; Flickr tags: yellow, bird, handmade, crochet, amigurimi (Flickr's spelling; 'amigurumi' is the correct spelling and is what we embed for both vector sources)",
+        "members": [
+          "yellow",
+          "bird",
+          "handmade",
+          "crochet",
+          "amigurumi"
+        ],
+        "colour_word": "yellow"
+      },
+      "glove": {
+        "members_present": [
+          "yellow",
+          "bird",
+          "handmade",
+          "crochet"
+        ],
+        "members_missing": [
+          "amigurumi"
+        ],
+        "candidate_vocab_size": 1156,
+        "candidate_vocab_skipped": 230,
+        "candidate_vocab_skipped_words": [
+          "abigfave",
+          "selfportrait",
+          "interestingness",
+          "i500",
+          "blackandwhite",
+          "365days",
+          "naturesfinest",
+          "impressedbeauty",
+          "diamondclassphotographer",
+          "anawesomeshot",
+          "supershot",
+          "flickrdiamond",
+          "streetart",
+          "strobist",
+          "longexposure",
+          "blueribbonwinner",
+          "newyorkcity",
+          "superbmasterpiece",
+          "400d",
+          "aplusphoto",
+          "flickrsbest",
+          "350d",
+          "project365",
+          "xpro",
+          "blackwhite",
+          "topf25",
+          "superaplus",
+          "nikonstunninggallery",
+          "holga",
+          "specanimal",
+          "nikond80",
+          "gothamist",
+          "searchthebest",
+          "nikond200",
+          "nikond50",
+          "atardecer",
+          "cameraphone",
+          "topv111",
+          "dflickr",
+          "nikond40",
+          "canoneos350d",
+          "sigma1020",
+          "k10d",
+          "buenosaires",
+          "30d",
+          "artlibre",
+          "canoneos400d",
+          "avianexcellence",
+          "unitedstates",
+          "crossprocessed",
+          "xti",
+          "photomatix",
+          "washingtondc",
+          "outstandingshots",
+          "blancoynegro",
+          "mediumformat",
+          "superhearts",
+          "amigurumi",
+          "ltytr1",
+          "wowiekazowie",
+          "newjersey",
+          "nightshot",
+          "platinumphoto",
+          "10faves",
+          "lomography",
+          "ilovenature",
+          "d70s",
+          "goldstaraward",
+          "360\u00b0",
+          "theperfectphotographer",
+          "topf50",
+          "canon400d",
+          "burningman",
+          "dcist",
+          "outdoorphotography",
+          "unitedkingdom",
+          "grdigital",
+          "bodylanguage",
+          "goldenphotographer",
+          "20d",
+          "delete2",
+          "biancoenero",
+          "wideangle",
+          "flickrexplore",
+          "canon30d",
+          "d40x",
+          "challengeyouwinner",
+          "save2",
+          "picnik",
+          "24hoursofflickr",
+          "newmexico",
+          "magicdonkey",
+          "d2x",
+          "ultimateshot",
+          "stilllife",
+          "newzealand",
+          "save3",
+          "catchycolors",
+          "chicagoist",
+          "15fav",
+          "firstquality",
+          "riodejaneiro",
+          "save4",
+          "tshirt",
+          "animalkingdomelite",
+          "southafrica",
+          "delete3",
+          "ysplix",
+          "guesswherelondon",
+          "creativecommons",
+          "shieldofexcellence",
+          "1855mm",
+          "enblend",
+          "delete4",
+          "squareformat",
+          "contraluz",
+          "novideo",
+          "100v10f",
+          "\u53f0\u7063",
+          "betterthangood",
+          "noiretblanc",
+          "denhaag",
+          "britishcolumbia",
+          "50mmf14",
+          "northcarolina",
+          "tenpositive",
+          "save5",
+          "stereographicprojection",
+          "510fav",
+          "pentaxk10d",
+          "thehague",
+          "save6",
+          "s\u00e3opaulo",
+          "specnature",
+          "thenetherlands",
+          "etringita",
+          "utatafeature",
+          "s3is",
+          "instantfave",
+          "canoneos30d",
+          "burningman2007",
+          "excellentphotographerawards",
+          "ritratto",
+          "lightpainting",
+          "sigma1020mm",
+          "mathmap",
+          "save7",
+          "crossprocessing",
+          "save8",
+          "abbandono",
+          "k100d",
+          "1025fav",
+          "canon350d",
+          "mywinners",
+          "\u65e5\u672c",
+          "cybershot",
+          "saopaulo",
+          "flickrgrouproulette",
+          "save10",
+          "stuckincustoms",
+          "savedbythedeltemeuncensoredgroup",
+          "delete5",
+          "delete10",
+          "fv5",
+          "naturalbeauty",
+          "ofme",
+          "actionfigure",
+          "bwdreams",
+          "canoneos40d",
+          "foundinsf",
+          "25faves",
+          "vision100",
+          "300d",
+          "\u0627\u064a\u0631\u0627\u0646",
+          "delete6",
+          "moblog",
+          "coneyisland",
+          "streetphotography",
+          "avision",
+          "peterbowers",
+          "faved",
+          "naturallight",
+          "timelapse",
+          "sb600",
+          "mholm",
+          "a640",
+          "bostonist",
+          "gwl",
+          "123bw",
+          "delete7",
+          "tiltshift",
+          "save9",
+          "\u0641\u0627\u0631\u0633\u06cc",
+          "standardpoodle",
+          "\u4e2d\u56fd",
+          "lakemichigan",
+          "lasvegas",
+          "1870mm",
+          "urbandecay",
+          "\u6771\u4eac",
+          "urbanfragments",
+          "carshow",
+          "babileta",
+          "eos350d",
+          "isawyoufirst",
+          "pasteup",
+          "1022mm",
+          "darkmatter",
+          "p1f1",
+          "flickrmeetup",
+          "bestofr",
+          "justpentax",
+          "expiredfilm",
+          "telaviv",
+          "18200mmf3556gvr",
+          "50mmf18",
+          "canon5d",
+          "awr",
+          "fv10",
+          "tonivc",
+          "geo:tool=gmif",
+          "\u0627\u06cc\u0631\u0627\u0646\u06cc\u0627\u0646",
+          "hoodriver",
+          "zuiko",
+          "rebelxt",
+          "mywinner",
+          "sb800",
+          "delete8",
+          "nycpb",
+          "\u53f0\u5317"
+        ],
+        "top10_nearest_vocab_tags": [
+          {
+            "word": "yellow",
+            "cosine": 0.6377296420256146
+          },
+          {
+            "word": "bird",
+            "cosine": 0.5784496915728203
+          },
+          {
+            "word": "handmade",
+            "cosine": 0.5533983008395699
+          },
+          {
+            "word": "pink",
+            "cosine": 0.54267865719654
+          },
+          {
+            "word": "crochet",
+            "cosine": 0.5030080759432916
+          },
+          {
+            "word": "birds",
+            "cosine": 0.48339087274174986
+          },
+          {
+            "word": "colorful",
+            "cosine": 0.4732675200033415
+          },
+          {
+            "word": "red",
+            "cosine": 0.471714533693765
+          },
+          {
+            "word": "embroidery",
+            "cosine": 0.454449140200394
+          },
+          {
+            "word": "purple",
+            "cosine": 0.45416187516080375
+          }
+        ],
+        "top10_nearest_vocab_tags_excluding_colour_word": [
+          {
+            "word": "crochet",
+            "cosine": 0.6419004450514173
+          },
+          {
+            "word": "handmade",
+            "cosine": 0.6201113655071748
+          },
+          {
+            "word": "bird",
+            "cosine": 0.5554858044783345
+          },
+          {
+            "word": "embroidery",
+            "cosine": 0.49761945441371574
+          },
+          {
+            "word": "knitting",
+            "cosine": 0.4881349671624072
+          },
+          {
+            "word": "birds",
+            "cosine": 0.46488948504276245
+          },
+          {
+            "word": "sewing",
+            "cosine": 0.4339853472023743
+          },
+          {
+            "word": "yarn",
+            "cosine": 0.39991631897569163
+          },
+          {
+            "word": "crafts",
+            "cosine": 0.3923206468968987
+          },
+          {
+            "word": "colorful",
+            "cosine": 0.388097936945438
+          }
+        ],
+        "colour_word_excluded": "yellow",
+        "avg_cosine_mean_to_own_members": 0.5681464275953241,
+        "median_cosine_mean_to_other_vocab_tags": 0.09074397359014305,
+        "gap_member_minus_other_median": 0.477402454005181,
+        "vector_notes": {
+          "amigurumi": "not in GloVe vocab; no two-part in-vocab subword split found (checked every split point); vector unavailable, excluded from mean"
+        }
+      },
+      "bge": {
+        "members_present": [
+          "yellow",
+          "bird",
+          "handmade",
+          "crochet",
+          "amigurumi"
+        ],
+        "members_missing": [],
+        "candidate_vocab_size": 1386,
+        "candidate_vocab_skipped": 0,
+        "candidate_vocab_skipped_words": [],
+        "top10_nearest_vocab_tags": [
+          {
+            "word": "handmade",
+            "cosine": 0.8411843483154051
+          },
+          {
+            "word": "crochet",
+            "cosine": 0.8269787299613046
+          },
+          {
+            "word": "colourful",
+            "cosine": 0.8175846396820894
+          },
+          {
+            "word": "hand",
+            "cosine": 0.8134495366620366
+          },
+          {
+            "word": "yellow",
+            "cosine": 0.8133989029214442
+          },
+          {
+            "word": "bird",
+            "cosine": 0.8080357961297201
+          },
+          {
+            "word": "image",
+            "cosine": 0.8077925848593209
+          },
+          {
+            "word": "colorful",
+            "cosine": 0.8077629190110356
+          },
+          {
+            "word": "foot",
+            "cosine": 0.8058305275550959
+          },
+          {
+            "word": "flower",
+            "cosine": 0.800247805115499
+          }
+        ],
+        "top10_nearest_vocab_tags_excluding_colour_word": [
+          {
+            "word": "handmade",
+            "cosine": 0.8638394122286993
+          },
+          {
+            "word": "crochet",
+            "cosine": 0.8469228425090994
+          },
+          {
+            "word": "hand",
+            "cosine": 0.8059802577212002
+          },
+          {
+            "word": "bird",
+            "cosine": 0.8051504831758288
+          },
+          {
+            "word": "amigurumi",
+            "cosine": 0.7910432543804695
+          },
+          {
+            "word": "etsy",
+            "cosine": 0.7898127273578619
+          },
+          {
+            "word": "crafts",
+            "cosine": 0.7872073974308517
+          },
+          {
+            "word": "yarn",
+            "cosine": 0.7858545538126626
+          },
+          {
+            "word": "homemade",
+            "cosine": 0.7853192603829678
+          },
+          {
+            "word": "hands",
+            "cosine": 0.7850456435388365
+          }
+        ],
+        "colour_word_excluded": "yellow",
+        "avg_cosine_mean_to_own_members": 0.8137581400368958,
+        "median_cosine_mean_to_other_vocab_tags": 0.6869015070955546,
+        "gap_member_minus_other_median": 0.1268566329413412
+      }
+    }
+  }
+}

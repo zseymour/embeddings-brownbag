@@ -1,0 +1,7 @@
+node_modules
+dist
+.slidev
+*.pdf
+experiments/data
+experiments/.cache
+__pycache__/

@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "dataset": "scifact",
+    "corpus_size": 5183,
+    "num_test_queries": 300,
+    "seed": 0,
+    "device": "cpu",
+    "single_vector_model": "BAAI/bge-small-en-v1.5",
+    "late_interaction_model": "answerdotai/answerai-colbert-small-v1",
+    "single_vector_query_encode_latency": {
+      "n": 295,
+      "p50_ms": 9.765249997144565,
+      "p95_ms": 11.364787600177806,
+      "mean_ms": 9.910275660834069
+    },
+    "late_interaction_query_encode_latency": {
+      "n": 295,
+      "p50_ms": 8.767084000282921,
+      "p95_ms": 11.582549999002367,
+      "mean_ms": 9.188441851253275
+    },
+    "single_vector_corpus_encode_seconds_total": 173.92508845799603,
+    "late_interaction_corpus_encode_seconds_total": 111.92465629099752,
+    "late_interaction_mean_tokens_per_doc": 235.6527107852595,
+    "hnsw_params": {
+      "M": 16,
+      "ef_construction": 200
+    },
+    "kmeans_k": 4096,
+    "muvera_settings": {
+      "small": {
+        "k_sim": 4,
+        "d_proj": 16,
+        "r_reps": 20
+      },
+      "large": {
+        "k_sim": 5,
+        "d_proj": 32,
+        "r_reps": 20
+      }
+    }
+  },
+  "table": [
+    {
+      "system": "single-vector",
+      "config": "bge-small f16 exhaustive dot product",
+      "hollow": true,
+      "ndcg10": 0.7127069247605036,
+      "recall100": 0.9416666666666667,
+      "bytes_per_doc": 768,
+      "latency": {
+        "n": 295,
+        "p50_ms": 0.0185410026460886,
+        "p95_ms": 0.030891998903825886,
+        "mean_ms": 0.020986599295194877
+      },
+      "notes": "E11 baseline reproduced: no index at all, brute-force dot product over the full corpus."
+    },
+    {
+      "system": "single-vector",
+      "config": "bge-small f16 HNSW ef=64",
+      "hollow": false,
+      "ndcg10": 0.7127313794604887,
+      "recall100": 0.9416666666666667,
+      "bytes_per_doc": 916.9778120779472,
+      "latency": {
+        "n": 295,
+        "p50_ms": 0.19075001182500273,
+        "p95_ms": 0.2312500000698492,
+        "mean_ms": 0.19086624093164328
+      },
+      "notes": "hnswlib, M=16, ef_construction=200, ef=64, top-100. bytes/doc = 768 (float16 vectors) + 149.0 (HNSW graph, measured from a serialised index)."
+    },
+    {
+      "system": "single-vector",
+      "config": "bge-small f16 HNSW ef=128",
+      "hollow": false,
+      "ndcg10": 0.7127069247605036,
+      "recall100": 0.945,
+      "bytes_per_doc": 916.9778120779472,
+      "latency": {
+        "n": 295,
+        "p50_ms": 0.22737499966751784,
+        "p95_ms": 0.27605819777818397,
+        "mean_ms": 0.22807949867841423
+      },
+      "notes": "hnswlib, M=16, ef_construction=200, ef=128, top-100. bytes/doc = 768 (float16 vectors) + 149.0 (HNSW graph, measured from a serialised index)."
+    },
+    {
+      "system": "single-vector",
+      "config": "bge-small int8 HNSW ef=128",
+      "hollow": false,
+      "ndcg10": 0.711871170613096,
+      "recall100": 0.9416666666666667,
+      "bytes_per_doc": 533.2741655411924,
+      "latency": {
+        "n": 295,
+        "p50_ms": 0.22833301045466214,
+        "p95_ms": 0.27336669154465204,
+        "mean_ms": 0.22789842026876442
+      },
+      "notes": "Per-dimension symmetric int8 scalar quantisation (scale = max|value| / 127), dequantised on the fly for scoring; query stays float32. bytes/doc = 384 (int8 vectors) + 149.0 (graph) + 0.30 (per-dim scales, amortised). vs the float16 HNSW at the same ef=128: nDCG@10 0.7127 -> 0.7119 (-0.0008), recall@100 0.9450 -> 0.9417 (-0.0033)."
+    },
+    {
+      "system": "late-interaction",
+      "config": "ColBERT f16 exhaustive MaxSim",
+      "hollow": true,
+      "ndcg10": 0.7455527012362625,
+      "recall100": 0.9560000000000001,
+      "bytes_per_doc": 45245.320470769824,
+      "latency": {
+        "n": 295,
+        "p50_ms": 56.76208299701102,
+        "p95_ms": 63.11704980325886,
+        "mean_ms": 57.49154397255891
+      },
+      "notes": "E11 baseline reproduced: no index at all, exact MaxSim over every token of every document."
+    },
+    {
+      "system": "late-interaction",
+      "config": "ColBERTv2-style residual (2-bit)",
+      "hollow": false,
+      "ndcg10": 0.7393938971156455,
+      "recall100": 0.9626666666666667,
+      "bytes_per_doc": 6278.706540613544,
+      "latency": {
+        "n": 295,
+        "p50_ms": 57.33820800378453,
+        "p95_ms": 70.8396122980048,
+        "mean_ms": 60.08387455929828
+      },
+      "notes": "k-means k=4096 (2^12) fit on a 200,000-token subsample (MiniBatchKMeans); every token: 2-byte centroid id + 2-bit/dim residual against a 4-value shared scalar codebook (quantile buckets, ColBERTv2-style, not per-dim). Reconstructed and exact-MaxSim'd over the whole corpus per query - isolates storage cost, not retrieval latency (latency is close to the exhaustive f16 baseline by design)."
+    },
+    {
+      "system": "late-interaction",
+      "config": "ColBERTv2-style residual (1-bit)",
+      "hollow": false,
+      "ndcg10": 0.7349529166284438,
+      "recall100": 0.9593333333333334,
+      "bytes_per_doc": 3450.872467682809,
+      "latency": {
+        "n": 295,
+        "p50_ms": 57.83866700949147,
+        "p95_ms": 70.75960369984388,
+        "mean_ms": 60.21981708492326
+      },
+      "notes": "k-means k=4096 (2^12) fit on a 200,000-token subsample (MiniBatchKMeans); every token: 2-byte centroid id + 1-bit/dim residual against a 2-value shared scalar codebook (quantile buckets, ColBERTv2-style, not per-dim). Reconstructed and exact-MaxSim'd over the whole corpus per query - isolates storage cost, not retrieval latency (latency is close to the exhaustive f16 baseline by design)."
+    },
+    {
+      "system": "late-interaction",
+      "config": "PLAID (pylate, default settings)",
+      "hollow": false,
+      "ndcg10": 0.7367516328617388,
+      "recall100": 0.9526666666666667,
+      "bytes_per_doc": 28080.968358093767,
+      "latency": {
+        "n": 295,
+        "p50_ms": 248.3114589995239,
+        "p95_ms": 284.55840419919696,
+        "mean_ms": 251.9666293863862
+      },
+      "notes": "pylate.indexes.PLAID, fast-plaid backend, unmodified defaults (nbits=4 product-quantised residuals, n_ivf_probe=8, n_full_scores=8192); top-100 per query. Its returned score is PLAID's own centroid-pruned candidate generation reranked internally with reconstructed residual vectors. bytes/doc measured directly from the serialised index on disk (145,543,659 bytes total)."
+    },
+    {
+      "system": "late-interaction",
+      "config": "MUVERA FDE 5120-d, no rerank",
+      "hollow": false,
+      "ndcg10": 0.45826606092912925,
+      "recall100": 0.8675555555555555,
+      "bytes_per_doc": 10269.635346324523,
+      "latency": {
+        "n": 295,
+        "p50_ms": 2.3356250021606684,
+        "p95_ms": 2.8220544947544117,
+        "mean_ms": 2.4087658299969794
+      },
+      "notes": "k_sim=4 (B=16 buckets), d_proj=16, R_reps=20 -> dim=5120. Exhaustive inner product over all 5183 docs' FDEs, top-100 taken as the final answer (no MaxSim rerank). bytes/doc is the FDE alone."
+    },
+    {
+      "system": "late-interaction",
+      "config": "MUVERA FDE 5120-d + MaxSim rerank",
+      "hollow": false,
+      "ndcg10": 0.7080105819414644,
+      "recall100": 0.8675555555555555,
+      "bytes_per_doc": 55514.95581709435,
+      "latency": {
+        "n": 295,
+        "p50_ms": 5.38237500586547,
+        "p95_ms": 10.042654494463932,
+        "mean_ms": 6.000123752361969
+      },
+      "notes": "Same FDE (dim=5120) retrieval, top-100 reranked with exact MaxSim over the original float16 token vectors. bytes/doc therefore adds the full per-token float16 store (45245 B/doc) on top of the FDE - reranking needs the original vectors available for every document, not just the FDE."
+    },
+    {
+      "system": "late-interaction",
+      "config": "MUVERA FDE 5120-d HNSW + rerank",
+      "hollow": false,
+      "ndcg10": 0.6982014674458417,
+      "recall100": 0.8542222222222222,
+      "bytes_per_doc": 55663.933629172294,
+      "latency": {
+        "n": 295,
+        "p50_ms": 6.592916994122788,
+        "p95_ms": 7.391962397377938,
+        "mean_ms": 6.569084596980001
+      },
+      "notes": "FDE (dim=5120) placed in the same hnswlib index as the single-vector HNSW config (M=16, ef_construction=200, ef=128), top-100, then exact-MaxSim rerank over original float16 token vectors. bytes/doc adds the FDE (with its own measured graph overhead) and the full per-token float16 store needed for reranking."
+    },
+    {
+      "system": "late-interaction",
+      "config": "MUVERA FDE 20480-d, no rerank",
+      "hollow": false,
+      "ndcg10": 0.5357409339497372,
+      "recall100": 0.9092222222222222,
+      "bytes_per_doc": 41014.82539070037,
+      "latency": {
+        "n": 295,
+        "p50_ms": 7.327792001888156,
+        "p95_ms": 7.8136751006240965,
+        "mean_ms": 7.4270659254595515
+      },
+      "notes": "k_sim=5 (B=32 buckets), d_proj=32, R_reps=20 -> dim=20480. Exhaustive inner product over all 5183 docs' FDEs, top-100 taken as the final answer (no MaxSim rerank). bytes/doc is the FDE alone."
+    },
+    {
+      "system": "late-interaction",
+      "config": "MUVERA FDE 20480-d + MaxSim rerank",
+      "hollow": false,
+      "ndcg10": 0.7296023528927736,
+      "recall100": 0.9092222222222222,
+      "bytes_per_doc": 86260.1458614702,
+      "latency": {
+        "n": 295,
+        "p50_ms": 9.78395801212173,
+        "p95_ms": 10.623883105290588,
+        "mean_ms": 9.938989796575111
+      },
+      "notes": "Same FDE (dim=20480) retrieval, top-100 reranked with exact MaxSim over the original float16 token vectors. bytes/doc therefore adds the full per-token float16 store (45245 B/doc) on top of the FDE - reranking needs the original vectors available for every document, not just the FDE."
+    }
+  ],
+  "headline": {
+    "late_interaction_exhaustive_ndcg10": 0.7455527012362625,
+    "quality_bar": "within 0.01 nDCG@10 of exhaustive MaxSim",
+    "best_late_interaction_serving_config": "ColBERTv2-style residual (2-bit)",
+    "best_late_interaction_bytes_per_doc": 6278.706540613544,
+    "best_late_interaction_p50_ms": 57.33820800378453,
+    "single_vector_hnsw_f16_ef128_bytes_per_doc": 916.9778120779472,
+    "single_vector_hnsw_f16_ef128_p50_ms": 0.22737499966751784,
+    "bytes_ratio_vs_single_vector_hnsw": 6.847173898772402,
+    "latency_ratio_vs_single_vector_hnsw": 252.1746369989141
+  }
+}
