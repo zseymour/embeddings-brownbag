@@ -33,9 +33,10 @@ interface VocabMetadata {
   }
 }
 
-const META_URL = '/data/set-mean-vocab.json'
-const VECTORS_URL = '/data/set-mean-vocab.f32'
-const QUERY_IMAGE = '/figures/kcca-amigurumi-query.jpg'
+const BASE_URL = import.meta.env.BASE_URL
+const META_URL = `${BASE_URL}data/set-mean-vocab.json`
+const VECTORS_URL = `${BASE_URL}data/set-mean-vocab.f32`
+const QUERY_IMAGE = `${BASE_URL}figures/kcca-amigurumi-query.jpg`
 
 const meta = ref<VocabMetadata | null>(null)
 const vectors = ref<Float32Array | null>(null)
