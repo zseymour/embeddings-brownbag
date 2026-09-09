@@ -3,7 +3,7 @@ theme: seriph
 colorSchema: dark
 title: On Uses of Neural Embeddings and the Bitter Lesson
 info: |
-  Brown bag, 60 minutes. What hand-built structure survived scale, and where it went.
+  Brown bag, about 45 minutes. What the embedding systems I built taught me about scaffolds and hard boundaries.
 class: text-left
 transition: fade
 aspectRatio: 16/9
@@ -12,21 +12,19 @@ layout: cover
 
 # On Uses of Neural Embeddings and the Bitter Lesson
 
-What hand-built structure survived scale, and where it went
+What the embedding systems I built taught me about scaffolds and hard boundaries
 
 <!--
-Title, subtitle, then: "This is a talk about being wrong in public, and about the one part of my old work that turned out not to be wrong."
+Title, subtitle, then: "This is a talk about being wrong in public, and about the parts of the embedding systems I built that turned out not to be wrong."
 
 Set the norm now: "Interrupt me. If something sounds like nonsense, it might be, and I'd rather find out now."
 -->
 
 ---
-layout: default
----
 
-# Image tagging, 2018
+# A hand-built pooling rule for image tags
 
-<p class="text-lg mb-2">The way it was built then: hand-picked kernels, a hand-clustered vocabulary, a hand-tuned pooling rule. This one is mine, so the failure rows are available.</p>
+<p class="text-lg mb-2">Hand-picked kernels, a hand-clustered vocabulary, a hand-tuned pooling rule. This system is mine, so the failure rows are available.</p>
 
 <div class="grid grid-cols-[auto_auto_1fr_1fr] gap-x-6 gap-y-3 items-center mt-2">
   <span class="text-xs op-60 text-center">query, with its Flickr tags</span>
@@ -34,183 +32,735 @@ layout: default
   <span class="text-sm font-bold text-orange-400">plain average of tag vectors</span>
   <span class="text-sm font-bold text-emerald-400">weighted average (mine)</span>
 
-  <figure class="m-0 text-center"><img src="/figures/kcca-poodle-query.jpg" alt="red standard poodle" class="max-h-36 rounded" /><figcaption class="text-xs op-60 mt-1">red, dog, poodle, standard, standardpoodle</figcaption></figure>
-  <img src="/figures/kcca-poodle-nn1.jpg" alt="first nearest neighbour" class="max-h-36 rounded mx-auto" />
+  <figure class="m-0 text-center"><img src="/figures/kcca-poodle-query.jpg" alt="red standard poodle" class="max-h-24 rounded" /><figcaption class="text-xs op-60 mt-1">red, dog, poodle, standard, standardpoodle</figcaption></figure>
+  <img src="/figures/kcca-poodle-nn1.jpg" alt="first nearest neighbour" class="max-h-24 rounded mx-auto" />
   <span class="font-mono text-orange-400 leading-snug"><strong>dog</strong>, explore, <strong>red</strong>, green, blue</span>
   <span class="font-mono text-emerald-400 leading-snug"><strong>dog</strong>, dogs, <strong>poodle</strong>, <strong>standard</strong>, <strong>standardpoodle</strong></span>
 
-  <figure class="m-0 text-center"><img src="/figures/kcca-amigurumi-query.jpg" alt="crochet bird" class="max-h-36 rounded" /><figcaption class="text-xs op-60 mt-1">yellow, bird, handmade, crochet, amigurimi</figcaption></figure>
-  <img src="/figures/kcca-amigurumi-nn1.jpg" alt="first nearest neighbour" class="max-h-36 rounded mx-auto" />
+  <figure class="m-0 text-center"><img src="/figures/kcca-amigurumi-query.jpg" alt="crochet bird" class="max-h-24 rounded" /><figcaption class="text-xs op-60 mt-1">yellow, bird, handmade, crochet, amigurimi</figcaption></figure>
+  <img src="/figures/kcca-amigurumi-nn1.jpg" alt="first nearest neighbour" class="max-h-24 rounded mx-auto" />
   <span class="font-mono text-orange-400 leading-snug"><strong>amigurimi</strong>, <strong>crochet</strong>, macro, explored, toy</span>
   <span class="font-mono text-emerald-400 leading-snug"><strong>amigurimi</strong>, <strong>crochet</strong>, toy, <strong>handmade</strong>, etsy</span>
 </div>
 
 <p class="text-xs op-60 mt-3">Bold: tag is in the ground truth. MIRFlickr-25k, image projected into a KCCA image-text space, five nearest tags returned.</p>
 
+<p class="source">Image Annotation Retrieval with Text-Domain Label Denoising, ACM ICMR 2018</p>
+
 <!--
 "Two Flickr photos, tagged by whoever uploaded them. Both columns project the image into the same learned image-text space and pull back the five nearest tags. The difference is only how the tag word vectors are pooled."
 
 "Plain averaging: the poodle comes back as dog, red, green, blue. The colour word swamps everything, and 'explore' is just a tag Flickr users spam. Weighted: dog, poodle, standard poodle. Same on the bird: the plain average gives macro and explored; the weighted one gives handmade, and etsy, which nobody labelled."
 
-"Everything that produced this is gone. Nobody would build it today. The interesting question is why, because the obvious answer, 'a bigger model ate it', is only half right. The other half is the one part of my old work that turned out not to be wrong. Hold on to the colour-word failure; it comes back in the uncertainty section."
+"Everything that produced this is gone. Nobody would build it today. The interesting question is why, because the obvious answer, 'a bigger model ate it', is only half right. Hold on to the colour-word failure; it comes back later, when we ask what one vector can preserve."
 -->
 
 ---
 
 # The same photos through a zero-shot model
 
-<p class="text-sm op-70 mb-2">CLIP ViT-B/32, one line, ranking the same 1,386-tag MIRFlickr vocabulary. No kernels, no clustering, no pooling rule. The owl fails the way 2018 failed: the photo is a shelf of crafts, and the models describe the shelf.</p>
+<p class="text-sm op-70 mb-2">CLIP ViT-B/32, one line, ranking the same 1,386-tag MIRFlickr vocabulary. No kernels, no clustering, no pooling rule. The owl fails the same way this system failed: the photo is a shelf of crafts, and the models describe the shelf.</p>
 
 <img src="/figures/exp-e1-zero-shot-tags.png" alt="zero-shot top-5 tags for the poodle, bird, and owl photos" class="max-h-80 mx-auto rounded" />
 
 <p class="source">own experiment, talk/experiments/e1_zero_shot_tags.py; MIRFlickr-25k common_tags.txt</p>
 
 <!--
-"Same three photos, same vocabulary, a 2021 model with a one-line prompt. Standard poodle first. Amigurumi first, spelled correctly; the uploader's misspelling isn't in the vocabulary. And the owl: collection, crafts, handmade, decoration, display. Which is what the photo is. The 2018 pipeline said cup, vintage, retro. Nobody finds the owl, because the tag is about a small wooden owl on a shelf full of other things."
+"Same three photos, same vocabulary, a 2021 model with a one-line prompt. Standard poodle first. Amigurumi first, spelled correctly; the uploader's misspelling isn't in the vocabulary. And the owl: collection, crafts, handmade, decoration, display. Which is what the photo is. My hand-built pipeline said cup, vintage, retro. Nobody finds the owl, because the tag is about a small wooden owl on a shelf full of other things."
 
-"Everything that produced the 2018 columns is gone. Nobody would build it today. The interesting question is why, because 'a bigger model ate it' is only half right."
+"Everything that produced my columns is gone. Nobody would build it today. The interesting question is why, because 'a bigger model ate it' is only half right."
 -->
 
 ---
 
-# Scale, on the one photo everything fails
+# Scale narrows the gap. It does not close it
 
-<p class="text-sm op-70 mb-2">Rank of the tag "owl" among 1,386, four zero-shot models by size. Scale moves it from 1013 to 10. Nothing tested puts it in the top five, and the curve is not monotonic.</p>
+<p class="text-sm op-70 mb-2">Same owl photo, same 1,386 tags, only the model changes. "Owl" moves from rank 1013 to 10, then back to 20. A large gain, but not a complete or monotonic one.</p>
 
 <img src="/figures/exp-e1-owl-rank-vs-scale.png" alt="rank of owl vs model size" class="max-h-85 mx-auto rounded" />
 
 <p class="source">own experiment, talk/experiments/e1_zero_shot_tags.py</p>
 
 <!--
-"Throw scale at it. Three times the parameters takes 'owl' from rank one thousand to rank ten. Six times, and it is back at twenty. Never top five. That is the shape of the bitter lesson in one chart: general methods plus compute win, by a large margin, and the residual is the data, not the architecture."
+"Throw scale at it. Three times the parameters takes 'owl' from rank one thousand to rank ten. Six times, and it is back at twenty. Never top five, and the curve is not monotonic. Scale is a real lever, not a decoration — two orders of magnitude of rank movement is not nothing. But it doesn't explain why the owl never clears the top five. Hold that open question."
 -->
 
 ---
 
-# What the bitter lesson says
+# The bitter lesson
 
-<blockquote class="text-lg">
+<blockquote class="text-3xl mt-12">
 General methods that leverage computation are ultimately the most effective, and by a large margin.
 </blockquote>
 
-<p class="text-sm op-70 mt-2">Two things scale: search and learning. The lesson itself, in his four parts:</p>
-
-<blockquote class="text-base mt-2">
-1) AI researchers have often tried to build knowledge into their agents, 2) this always helps in the short term, and is personally satisfying to the researcher, but 3) in the long run it plateaus and even inhibits further progress, and 4) breakthrough progress eventually arrives by an opposing approach based on scaling computation by search and learning.
-</blockquote>
-
-<p class="text-sm op-70 mt-3">On the surviving structure in vision he says only that modern networks "use only the notions of convolution and certain kinds of invariances". A description of how little survived, not an argument for keeping it. The four grades in this talk are his four parts.</p>
+<p class="text-xl op-70 mt-8">Search and learning scale. Hand-built knowledge helps early, then plateaus.</p>
 
 <p class="source">Sutton, The Bitter Lesson, 2019</p>
 
 <!--
-"Part two is the 2018 half of this talk: every hand-built piece helped, and it was satisfying. Part three is 'absorbed'. The word that matters is knowledge: encoding your guesses about a task stops paying. That is not the same as encoding a fact about the world, and the essay is careful about that distinction; we'll come back to it."
--->
+"The owl chart is the receipt for both halves of Sutton's claim: two more orders of magnitude of compute moved the rank a lot, a real gain, and still never found the owl, a real residual."
 
----
-layout: statement
----
-
-# <span class="text-5xl">Structure survives in training and at the boundary.<br>Inside the model's job, scale eats it.</span>
-
-<p class="text-base op-60 mt-6">the boundary: the index the vector sits in, the threshold you put on its score, the tools around the model</p>
-
-<blockquote class="text-base mt-8">
-"We should build in only the meta-methods that can find and capture this arbitrary complexity."
-</blockquote>
-
-<p class="text-sm op-60 mt-1">Sutton, on what does belong inside. A loss, a sampler, a calibration set, a rerank: meta-methods. A cluster tree, a segmentation branch, a chunking rule: contents.</p>
-
-<!--
-"I'm not going to tell you geometry is back. I'm going to tell you where it went: into loss functions and samplers, and into the boundary around the model: the index, the threshold, the rerank. Not into the thing the model does. Sutton says it in one sentence: build in only the meta-methods. Training and boundary are where meta-methods live. Inside is where contents live. Hold on to those three words, training, boundary, inside; every grade in this talk gets one."
+"That is Sutton's claim. He lays it out in four steps: researchers build knowledge into a system; it helps; it plateaus; then search and learning overtake it. The word that matters is knowledge. Encoding your guesses about a task stops paying. That is not the same as encoding a fact about the world. The essay is careful about that distinction, and this talk is built around it."
 -->
 
 ---
 
-# The four grades, and three places
+# Three jobs for structure
 
-<div class="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 mt-6 text-xl">
-  <span class="text-emerald-400 font-bold">held</span><span>still used in 2026 systems</span>
-  <span class="text-orange-400 font-bold">absorbed</span><span>a larger model does it without the hand-built part</span>
-  <span class="text-orange-400 font-bold">absorbed, not free</span><span>pushed out of the model to the boundary; still costs engineering</span>
-  <span class="text-purple-300 font-bold">unresolved</span><span>evidence still mixed</span>
+<div class="grid grid-cols-3 gap-6 mt-10 text-center">
+  <div class="rounded-lg border border-white/15 bg-white/5 px-5 py-6">
+    <p class="text-2xl font-bold">Shape learning</p>
+    <p class="text-base op-60 mt-3">loss · sampler · curriculum</p>
+    <p class="text-sm op-70 mt-7">no serving dependency</p>
+  </div>
+  <div class="rounded-lg border border-white/15 bg-white/5 px-5 py-6">
+    <p class="text-2xl font-bold">Scaffold</p>
+    <p class="text-base op-60 mt-3">bridges a capability gap</p>
+    <p class="text-sm op-70 mt-7">useful now, modular, removable</p>
+  </div>
+  <div class="rounded-lg border border-white/15 bg-white/5 px-5 py-6">
+    <p class="text-2xl font-bold">Hard boundary</p>
+    <p class="text-base op-60 mt-3">enforces a system fact</p>
+    <p class="text-sm op-70 mt-7">explicit, durable</p>
+  </div>
 </div>
 
-<div class="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 mt-8 text-lg">
-  <span class="font-bold">training</span><span>the loss, the sampler, the curriculum; gone by inference time</span>
-  <span class="font-bold">boundary</span><span>between the model and the rest of the system: the index, the threshold, the rerank, the tool</span>
-  <span class="font-bold">inside</span><span>the model's own job: what it represents and how it computes</span>
+<div class="mt-10 text-center text-2xl font-semibold leading-snug">
+  <p>A scaffold is allowed to disappear. A hard boundary should not.</p>
 </div>
+
+<p class="text-base op-50 text-center mt-4">The same rule applies to scaffolding around models we do not train ourselves.</p>
 
 <!--
-"My current enthusiasms get graded as hard as my old work. Grades at the end of each section, and a scoreboard at the end."
--->
+"Three jobs hand-built structure can do. Shape learning: put it in the loss, the sampler, the curriculum, and it never has to survive at inference. Scaffold: a piece that bridges something the model can't do yet. It's allowed to be useful and temporary, as long as it's modular enough to remove later. Hard boundary: a fact about your system, not a guess about the model, permissions, budgets, what data crosses a line. That one should stay explicit forever."
 
----
+"Every act from here asks the same question about a piece of hand-built structure: which of these three jobs is it doing?"
 
-# Four kinds of structure
-
-<div class="grid grid-cols-[auto_1fr_1fr] gap-x-10 gap-y-3 mt-4 text-base">
-  <span class="op-60 text-sm">structure</span><span class="op-60 text-sm">how it was hand-built, 2016 to 2019</span><span class="op-60 text-sm">where it lives in 2026</span>
-  <span class="font-bold">Hierarchy</span><span>cluster trees over vocabularies; curved embedding spaces <span class="op-60">(mine: a tag cluster tree)</span></span><span>hierarchy-aware losses; the served vector stays flat</span>
-  <span class="font-bold">Uncertainty</span><span>hand-set similarity rules; pooling rules for sets <span class="op-60">(mine: a subset rule, weighted averaging)</span></span><span>a calibration set and a percentile</span>
-  <span class="font-bold">Place recognition</span><span>hand-wired semantic branches and attention modules <span class="op-60">(mine: SAANE, 2018)</span></span><span>frozen self-supervised features; harder negatives</span>
-  <span class="font-bold">More than one vector</span><span>documents chunked into fixed windows, one vector each <span class="op-60">(mine: three sliding windows)</span></span><span>one vector per token or patch, scored late; flattened again to fit the index</span>
-</div>
-
-<p class="text-sm op-70 mt-5">Then Cost: what a production index accepts. Then a coda: the same scoreboard for the harness around an LLM.</p>
-
-<!--
-"Four kinds of structure the field built by hand around 2018, one section each. Each section: the problem as you meet it today, the evidence, the 2018 version, the grade, and where the structure lived: training, boundary, or inside. Watch that column; it's the point."
+"Hold onto this framework — it comes back at the very end."
 -->
 
 ---
 layout: section
 ---
 
-# Hierarchy
+# What can one vector preserve?
 
-Hierarchies were hand-built into vocabularies and into embedding spaces. Where does hierarchy live in an embedding system now?
-
----
-layout: center
----
-
-<div class="text-4xl leading-relaxed font-semibold">
-United States<br>
-→ California<br>
-→ Bay Area<br>
-→ Mountain View
-</div>
+A photo has six tags. A document has ten thousand words. One vector has to speak for all of it.
 
 <!--
-"Four levels. Now the thing you did this week: you embedded a pile of stuff and dropped the vectors into a cosine index. Flat. What happens to a tree when you flatten it?"
+"Every system in this act puts one item through one encoder and gets one vector back. The question is what that one vector can hold before it runs out of room, and where the field put the parts that didn't fit."
 -->
 
 ---
-clicks: 3
+
+# Two hand-built fixes for one photo, six tags
+
+<p class="text-sm op-70 mb-4">A photo with six tags is not one thing. Two hand-built rules for representing it anyway, one at pooling time and one at training time. Both mine, both from the same annotation project.</p>
+
+<div class="grid grid-cols-2 gap-10 text-lg">
+  <div>
+    <p class="font-bold text-orange-400 mb-2">Pooling: weighted average of the tag vectors</p>
+    <p>Plain averaging failed on the poodle row from the opening. "When the tag vectors are just averaged, the color word quickly overwhelms the model."</p>
+  </div>
+  <div>
+    <p class="font-bold text-orange-400 mb-2">Training: the subset rule</p>
+    <ul>
+      <li>A positive example is anything whose tags are a subset of mine</li>
+      <li>Margin fixed by hand</li>
+      <li>Training stalled, so a second loss term, weight also by hand</li>
+    </ul>
+  </div>
+</div>
+
+<p class="source">Image Annotation Retrieval with Text-Domain Label Denoising, ACM ICMR 2018; Multi-label Triplet Embeddings for Image Annotation from User-Generated Tags, ACM ICMR 2018</p>
+
+<!--
+"The pooling rule, you already saw. The subset rule is new: I never called 'similar' a yes/no question. Any photo sharing some of my tags counted as a positive, at a margin I set by hand, plus a second loss term when training stalled."
+
+"Both rules are guesses about what one vector can't hold on its own. The mechanism behind the left one is next. The principled version of the right one is two slides after that."
+-->
+
+---
+
+# Why plain averaging fails
+
+<p class="text-sm op-70 mb-2">The mean of a set sits inside the hull of its members, by definition. Below: the real amigurumi photo, its five Flickr tags, and the actual 1,386-word MIRFlickr vocabulary, embedded with bge-small-en-v1.5. The scatter is a 2-D PCA projection for display only -- the mean and its nearest unselected neighbour are computed by cosine over the real 384 dimensions. Click any point to add its tag to the set.</p>
+
+<SetMean />
+
+<!--
+"Five real tags on the actual photo: yellow, bird, handmade, crochet, amigurumi. Average them with bge-small-en-v1.5 and search by cosine over the real 1,386-tag MIRFlickr vocabulary. The nearest unselected tag to that mean is 'colourful'. The colour word still pulls, just less violently than the 2018 GloVe vectors did: the gap between the mean's cosine to its own members and its cosine to the rest of the vocabulary shrinks from about 0.48 with 2018-era vectors to about 0.13 here."
+
+"Click any of the other 1,381 points to add it to the tag set, then watch the hull, mean, and nearest unselected neighbour recompute live. The scatter you're clicking on is a 2-D PCA projection for display only -- every number on screen is computed from the real 384 dimensions, not from where the dot sits."
+
+"Attention pooling doesn't dodge this: it's still a convex combination, still a point in this same hull, it just learns which point instead of averaging blindly. The vector you serve is still one point."
+-->
+
+---
+
+# Learned distributions: the principled fix
+
+<p class="text-sm op-70 mb-2">The principled version of both hand-built fixes: learn a distribution instead of a point, wide for ambiguous items, tight for unambiguous ones. Standard ANN indexes cannot compare distributions, so the workaround (SLOSH) re-embeds them as ordinary points before they ever reach an index.</p>
+
+<img src="/figures/paper-hib-corrupted.png" alt="Hedged Instance Embedding: ambiguous inputs map to wide Gaussians" class="max-h-72 mx-auto rounded bg-white mt-2" />
+
+<p class="source">Hedged Instance Embedding, 2018 (Fig. 3); Decomposing Uncertainty in Probabilistic KG Embeddings, 2025; SLOSH, 2021</p>
+
+<!--
+"It's elegant, and the field's verdict on it is rough. Detecting randomly corrupted facts: 0.99 AUROC. Under temporal drift, the only kind of drift you get in production, it drops to 0.52 to 0.64."
+
+"Comparing two distributions properly is expensive enough that the standard workaround squashes them back into ordinary vectors before they ever reach an index. Same shape as both hand-built fixes on the last two slides: a good idea about representing uncertainty, and no serving path for it yet."
+-->
+
+---
+
+# Fixed windows commit before the query arrives
+
+<div class="grid grid-cols-2 gap-10 mt-6 text-lg items-start">
+  <div>
+    <p class="font-bold text-orange-400 mb-2">My 2019 pipeline</p>
+    <ul>
+      <li>Three 300-character windows</li>
+      <li>25% overlap</li>
+      <li>Truncate after 5,000 characters</li>
+    </ul>
+  </div>
+  <div>
+    <p class="font-bold text-emerald-400 mb-2">The lasting problem</p>
+    <p>Any fixed boundary can split the evidence a query needs. A different window only moves the split.</p>
+  </div>
+</div>
+
+<p class="source">Leveraging Weakly-Aligned, User-Generated Data for Deep Learning Features (Binghamton, 2019)</p>
+
+<!--
+"My text model, from the dissertation: three windows, 300 characters each, 25% overlap, and anything longer truncated at 5,000 characters. The numbers were a reasonable response to a memory limit at the time, not a mistake."
+
+"The durable problem isn't the numbers. It's that no fixed window knows what the later query will need. Any boundary you pick can split the evidence apart, and a different window just moves the split somewhere else. Next slide is what changes when you stop choosing the unit in advance: ColBERT changes when the unit gets chosen, from before the query to after it."
+-->
+
+---
+
+# Late interaction: keep every token
+
+<p class="text-sm op-70 mb-2">ColBERT, 2020. Encode the query and the document into one vector per token. Score = sum over query tokens of the maximum similarity to any document token. No pooling; the document is stored as a set.</p>
+
+<img src="/figures/paper-colbert-paradigms.png" alt="representation-based, interaction, all-to-all, and late interaction" class="max-h-50 mx-auto rounded bg-white" />
+
+<p class="text-sm op-70 mt-3">Left: the single-vector model every earlier slide served. Right: late interaction, which keeps the per-token vectors and defers the comparison to query time. ColBERTv2 on MS MARCO: MRR@10 39.7 against 38.8 for the best single-vector model in the same table.</p>
+
+<p class="source">ColBERT, 2020 (Fig. 2); ColBERTv2, 2022 (Table 4)</p>
+
+<!--
+"Panel a is everything so far: one vector each side, one dot product. Panel d keeps every token vector and does the matching late. No mean, no attention pooling, no chunk boundary picked before the query arrives — nothing chosen in advance. The document stays a set."
+-->
+
+---
+
+# ColPali: keep every patch, skip the text pipeline
+
+<p class="text-sm op-70 mb-2">The same idea on documents as images. Standard pipeline: OCR, layout detection, chunking, captioning, text embedding. ColPali: embed the page image, keep every patch, score with MaxSim. On ViDoRe, averaged over ten tasks: +14 points of nDCG@5 over the best text pipeline.</p>
+
+<img src="/figures/paper-colpali-pipeline.png" alt="standard OCR and chunking pipeline vs ColPali page-patch pipeline" class="max-h-70 mx-auto rounded bg-white" />
+
+<p class="source">ColPali, 2024 (Fig. 1; Table 2, CC0)</p>
+
+<!--
+"Documents as pictures. The top pipeline is what most document RAG looks like: OCR, layout, chunk, caption, embed, five hand-designed stages. The bottom one embeds the page and keeps a vector per patch: nDCG@5 81.3 against 67.0 for the best text pipeline, fourteen points, no text pipeline at all. That's the chunking slide, absorbed."
+-->
+
+---
+
+# Keeping every token helps. Now we have to serve it
+
+<p class="text-sm op-70 mb-2">SciFact, 300 queries. One 384-dim vector per document (bge-small) against one 96-dim vector per token (answerai-colbert-small, 236 tokens per document on average), both 33M-parameter encoders, exhaustive scoring.</p>
+
+<img src="/figures/exp-e11-late-interaction.png" alt="nDCG@10 and Recall@100, and bytes per document, single vector vs late interaction" class="max-h-70 mx-auto rounded" />
+
+<p class="text-sm op-70 mt-2">nDCG@10: 0.713 → 0.746, keeping every token instead of one vector. Byte panel: raw float16, uncompressed. Not the production cost.</p>
+
+<p class="source">own experiment, talk/experiments/e11_late_interaction.py; BEIR SciFact</p>
+
+<!--
+"Now test that answer on SciFact, same size encoders. Keep every token and quality goes up three points of nDCG; recall and MRR move the same direction, 0.942 to 0.956 and 0.682 to 0.719."
+
+"The right-hand panel of the figure is the raw cost before anyone engineers it: sixty times the bytes in float16, no compression. That's not what it costs once someone builds an index for it — the next slide is how you pay for keeping every token inside an ordinary index, and what's in the backup is the fully engineered bill."
+-->
+
+---
+
+# The index still wants one vector
+
+<p class="text-sm op-70 mb-2">MUVERA, 2024: compress each document's token set into one fixed-dimensional vector whose inner product approximates MaxSim, retrieve with an ordinary MIPS index, then rerank the candidates with exact MaxSim.</p>
+
+<div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-4 mt-8">
+  <div class="w-40 rounded-lg border border-white/15 bg-white/5 px-3 py-4 text-center">
+    <p class="font-bold text-sm">Token set</p>
+    <p class="text-xs op-60 mt-1">one vector per token</p>
+  </div>
+  <div class="text-2xl op-40">→</div>
+  <div class="w-40 rounded-lg border border-white/15 bg-white/5 px-3 py-4 text-center">
+    <p class="font-bold text-sm">One fixed-dimensional encoding</p>
+  </div>
+  <div class="text-2xl op-40">→</div>
+  <div class="w-40 rounded-lg border border-orange-400/40 bg-orange-400/10 px-3 py-4 text-center">
+    <p class="font-bold text-sm text-orange-400">Ordinary MIPS shortlist</p>
+    <p class="text-xs op-60 mt-1">approximate</p>
+  </div>
+  <div class="text-2xl op-40">→</div>
+  <div class="w-40 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-3 py-4 text-center">
+    <p class="font-bold text-sm text-emerald-400">Exact MaxSim rerank</p>
+    <p class="text-xs op-60 mt-1">exact</p>
+  </div>
+</div>
+
+<p class="text-base text-center mt-6">One vector is enough to shortlist. The full token set comes back to rerank the candidates, not to decide how many of them to return.</p>
+
+<p class="text-lg font-semibold text-center mt-3">Reranking still produces a ranking. Something else has to decide where it gets cut.</p>
+
+<p class="source">MUVERA, 2024 (Fig. 1); Weaviate 1.31 ships it as the default multi-vector encoding</p>
+
+<!--
+"Two stages instead of four. The fixed-dimensional encoding is a single vector whose dot product approximates the multi-vector score, so an ordinary MIPS index, DiskANN off the shelf, can do the candidate retrieval, approximate. Then exact MaxSim reranks the shortlist, and the structure you compressed away comes back, exact. Against PLAID, ColBERT's own multi-stage engine: on average 10% higher recall at 90% lower latency across BEIR."
+
+"Notice what reranking did and didn't do. It reordered the shortlist more accurately. It didn't decide how many of those reordered results anyone should actually get back. That question doesn't go away no matter how good the ranking underneath it is."
+-->
+
+---
+layout: section
+---
+
+# Which results should we return?
+
+A ranking orders candidates. Whoever calls the retriever still has to decide how many of them to keep.
+
+<!--
+"Every system so far ends the same way: a ranked list. This act is about the decision after the ranking: how many of those ranked results actually get returned. A real query, a real score gap, and what it takes to turn 'these are ranked' into 'these are the ones I'm returning.'"
+-->
+
+---
+
+# A ranking is not an answer
+
+<p class="text-sm op-70 mb-2">A real query against a real corpus: SciFact, 5,183 abstracts, bge-small-en-v1.5. The query asks about IL-2 and regulatory T cells. Top five by cosine, with the benchmark's relevance labels.</p>
+
+<img src="/figures/exp-e4-top5.png" alt="top five retrieved documents with cosine scores; relevant and non-relevant interleave" class="max-h-75 mx-auto rounded" />
+
+<p class="text-lg font-semibold mt-3">Relevant and irrelevant results interleave. No cosine threshold separates them here.</p>
+
+<p class="source">own experiment, talk/experiments/e4_real_scores.py; BEIR SciFact query 1029</p>
+
+<!--
+"Real scores, real labels. Relevant, relevant, not, relevant, not, and the whole spread is seven hundredths. 0.804 is a similarity score, not an 80.4% chance of relevance. And every one of you has hardcoded a top-five or top-ten cutoff on a score like this and moved on."
+
+"A ranking told you the order. It didn't tell you where to stop. That's the real question: given this list, how many of these do you actually return? Two things settle it. What risk of missing a relevant result are you willing to accept, and do this retriever's scores even separate relevant from irrelevant well enough to act on. Coverage first, then what it costs."
+-->
+
+---
+
+# The cutoff cannot move the points
+
+<p class="text-sm op-70 mb-2">Illustrative unit-normalized embeddings. Same documents and labels; different angles.</p>
+
+<CosineCutoff />
+
+<p class="text-sm op-70 mt-2">Widen the accepted region to keep all six relevant documents. Better separation lets us do that with fewer irrelevant results.</p>
+
+<p class="source">toy illustration, not measured data; real SciFact calibration is next</p>
+
+<!--
+"Twenty-one illustrative documents on a unit circle: six relevant in green, fifteen irrelevant in gray. The query points right. Both panels show the same documents and labels, but the second embedding separates the relevant directions from the irrelevant ones."
+
+"For unit vectors, cosine similarity is the dot product. The cutoff accepts the shaded wedge around the query. Lower the cutoff and the wedge widens. Both panels start at 0.94. On the left, that misses four of the six relevant documents. Press 'Keep all relevant': it chooses the highest slider setting that includes all six, 0.61 on the left and 0.95 on the right. The first embedding returns eleven documents to keep all six relevant. The second returns six."
+
+"The button uses known labels for this one illustrative query. Real calibration uses many labelled calibration queries: record each query's lowest relevant score, take a lower percentile with a finite-sample correction, then check that cutoff on separate held-out queries without using their labels to choose it. For the experiment next, the target is that ninety percent of queries keep every labelled relevant document. That is different from the fraction of green points kept in this one drawing. The guarantee is marginal over the calibration sample and future query, and requires exchangeability."
+
+"What that actually costs on a real retriever is next."
+-->
+
+---
+
+# What that target costs, on this retriever
+
+<p class="text-sm op-70 mb-3">bge-small-en-v1.5, calibrated on SciFact: 300 labelled queries, 5,183 abstracts, averaged over 500 random calibration/held-out splits.</p>
+
+<div class="grid grid-cols-2 gap-8 text-center mt-2">
+  <div class="rounded-lg border border-white/15 bg-white/5 px-6 py-6">
+    <p class="text-sm op-60 uppercase tracking-wide mb-3">Target</p>
+    <p class="text-lg font-semibold">90% of held-out queries keep every labelled relevant document</p>
+  </div>
+  <div class="rounded-lg border border-orange-400/40 bg-orange-400/10 px-6 py-6">
+    <p class="text-sm op-60 uppercase tracking-wide mb-3">Observed (mean over 500 splits)</p>
+    <p class="text-3xl font-bold text-orange-400">90.2% coverage</p>
+    <p class="text-lg font-semibold text-orange-400 mt-2">167 documents kept per query</p>
+  </div>
+</div>
+
+<p class="text-base text-center mt-4">Calibration controls miss risk. Better score separation can reduce the number of documents needed to meet the same target.</p>
+
+<p class="source">own experiment, talk/experiments/e4_real_scores.py; BEIR SciFact</p>
+
+<!--
+"Same bge-small retriever from the ranking slide, calibrated the way I just described: 300 labelled queries, 500 random calibration/held-out splits. Averaged over those splits, coverage lands almost exactly on target, 90.2%. Any single split can miss that badly — this is the mean across splits, not a per-run guarantee."
+
+"Hitting the target costs 167 documents per query on average, out of 5,183, where a fixed top-10 keeps 10. That's not a calibration failure. Calibration did exactly its job: it found the cutoff that controls your miss risk, honestly, given this retriever's actual scores. The cost comes from somewhere else — the relevant and irrelevant scores are too close together for a tight cutoff to also be a safe one. Calibration controls your miss risk. It can't manufacture separation the embedding doesn't have."
+
+"Better separation between relevant and irrelevant scores can reduce how many documents we need to return at the same coverage target. For place recognition, I tried to get that separation by teaching the representation which parts of a scene should stay the same across seasons."
+-->
+
+---
+layout: section
+---
+
+# What shapes the embedding?
+
+Can we train the representation to separate places despite seasons and weather? I tried a semantic branch and attention.
+
+<!--
+"A cutoff cannot make the relevant results easier to separate. For place recognition, I tried teaching the representation what should stay the same across seasons."
+
+Never cut this act.
+
+"Then I moved into robot navigation. First paper: the embedding was the product. Second: the embedding fed a policy. Third: the embedding was a component inside a bigger learned system and nobody talked about it. So the trajectory of my own career is 'the embedding stopped being the deliverable.' The reason this act still matters: plumbing has a geometry and a bill, and the bill is the part scale never pays."
+-->
+
+---
+
+# SAANE: the pipeline
+
+<p class="text-sm op-70 mb-2">The bet: a second network segments the scene (road, building, sky, tree) and tells the appearance network where to look, so the descriptor survives seasons and weather.</p>
+
+<img src="/figures/saane-pipeline.png" alt="SAANE pipeline: two backbones, fusion, attention, pooling" class="max-h-90 mx-auto rounded bg-white" />
+
+<p class="source">Semantically-Aware Attentive Neural Embeddings for Image-based Visual Localization (SAANE), BMVC 2019</p>
+
+<!--
+One sentence: "A second network segments the scene, road, building, sky, tree, and tells the appearance network where to look, so the descriptor survives seasons and weather."
+-->
+
+---
+
+# SAANE's positive case: semantics survives the season
+
+<p class="text-base op-80 mb-3">Nordland, winter to summer: SAANE retrieves the exact location; AMOSNet misses by 13 km; App+Sem by 212 m.</p>
+
+<img src="/figures/saane-retrieval-nordland.png" alt="Nordland positive case: SAANE retrieves the exact location across seasons" class="max-h-90 mx-auto rounded bg-white" />
+
+<p class="source">SAANE, BMVC 2019 (supplementary figures)</p>
+
+<!--
+"First, the positive result. The query is winter and the database image is summer. SAANE retrieves the exact place. The appearance-only baseline lands thirteen kilometres away, and the fusion model without attention lands 212 metres away. Here, the semantic path and attention do exactly what I designed them to do."
+
+"That makes the failure case meaningful rather than a cheap retrospective dismissal."
+-->
+
+---
+
+# SAANE's failure case: attention on a shadow
+
+<p class="text-base op-80 mb-3">Retrieval errors, same query: SAANE misses by 271 m; App+Sem by 613 m; appearance-only AMOSNet is within 1 m.</p>
+
+<img src="/figures/saane-supp-6.png" alt="St. Lucia failure case: attention maps and retrieved-image distances" class="max-h-90 mx-auto rounded bg-white" />
+
+<p class="source">SAANE, BMVC 2019 (supplementary figures)</p>
+
+<!--
+"Now the contrast: the same mechanism fails on St. Lucia."
+
+"A shadow from a power pole falls across the query image, and the multimodal attention module treats it as useful structure instead of ignoring it. SAANE lands 271 meters off. My combined model without attention, App+Sem, lands 613 meters off, worse. The appearance-only baseline, no semantic branch at all, lands within a meter. The hand-built semantic path did not save either fusion model on this query. The distances are the verdict; the attention and segmentation columns in the middle are diagnostics, not results."
+-->
+
+---
+
+# 2023: off the shelf, no place-recognition training
+
+<p class="text-sm op-70 mb-2">AnyLoc: frozen DINOv2 features plus unsupervised VLAD, no place-recognition training. It wins Recall@1 in both structured and unstructured environments, narrowly in one, by nearly double in the other. The authors credit semantic structure the model learned without supervision.</p>
+
+<AnyLocGains />
+
+<p class="source">AnyLoc, 2023 (Tables III-IV)</p>
+
+<!--
+"Say the caveat out loud: my paper reported a different metric than today's papers, AUC instead of Recall@1, so it isn't a head-to-head with SAANE. This chart is AnyLoc against three methods trained end-to-end for place recognition, on AnyLoc's own benchmark split."
+
+"Structured environments, indoor, campus, well-mapped: all four methods span 62 to 86 percent, and AnyLoc is highest, but every trained method is respectable. Unstructured environments, off-road, aerial, unmapped: the three trained methods drop to the high twenties and low thirties, and AnyLoc holds 65 percent, nearly double the best of them."
+
+"That's DINOv2, frozen, off the shelf, zero place-recognition training, the model this chart introduces. The semantic structure the authors credit shows up exactly where hand-tuned training data was scarcest. Next: the same frozen model, run directly on the SAANE query frames."
+-->
+
+---
+
+# The SAANE frames through a frozen model
+
+<p class="text-sm op-70 mb-2">Frozen DINOv2 recovers the same sky and road structure across snow, night, and daylight, without labels or place-recognition training.</p>
+
+<img src="/figures/exp-e9-dino-pca.png" alt="query frames, SAANE hand-wired segmentation, DINOv2 PCA, DINOv2 k-means" class="max-h-76 mx-auto rounded" />
+
+<p class="source">own experiment: facebook/dinov2-base at 896 px, talk/experiments/e9_dino_pca.py</p>
+
+<!--
+"These are the three query frames from the SAANE paper (BMVC 2019), through a frozen DINOv2 with nothing trained on top. Column three is a PCA of the patch features, column four is six clusters fit across all three frames at once. Sky is one cluster in all three. Road surface is one cluster in the two frames that have asphalt, and Nordland's rail ballast got its own cluster instead of being forced into 'road'. Purity against SAANE's twelve-class hand-wired map is in the fifties and sixties, chance is eight. So: not SAANE's segmentation map, but the part of it that mattered for place recognition, sky and ground, for free."
+-->
+
+---
+
+# Smarter negatives change training, not serving
+
+<VprProgress />
+
+<p class="source">MixVPR, 2023; SALAD, 2023; CliqueMining, 2024; SelaVPR++, 2025</p>
+
+<!--
+"The thing that survived hardest wasn't in the architecture at all. Get smarter about which negative examples you show the model during training, same network, not one layer changed, and accuracy on the hardest seasonal benchmark jumps from seventy-six to ninety-one percent. That's a sampling trick, and a sampling trick is what I also had in that paper, in a footnote, as a detail."
+
+"I found that out by going back and reading my own thesis."
+
+"But it's a training-time trick: it changes which pairs the loss sees, and it never touches what gets served. The next table is the other side of that line, what the index sees once the vector actually ships."
+-->
+
+---
+
+# After training, the index sets the serving rules
+
+<IndexMetrics />
+
+<p class="source">FAISS wiki; DiskANN docs; Milvus 2.4 and 2.6.4 docs; Qdrant 1.10 notes; Elasticsearch 8.18 reference; Pinecone docs</p>
+
+<!--
+"The sampling trick from the last slide is invisible here. The index never sees which negatives trained the model; it only ever sees the vector's shape and the metric you search it with. Whatever structure survives training, or gets bent into a boundary trick, still has to clear this table."
+
+"Source is the FAISS wiki, read directly: two metrics, L2 and inner product, cosine is normalize-then-inner-product. Same story everywhere: DiskANN three metrics, Milvus three plus Hamming."
+
+"That's the vendor telling you: nobody ships a curved index, nobody ships a Wasserstein index. Every trick in this talk that survived, the sign flip, the re-embedding, the fixed-dimensional encoding, survived by fitting into this table."
+-->
+
+---
+
+# The serving budget can shape training
+
+<p class="text-sm op-70 mb-3">Deployment is a hard boundary: a fixed memory and latency budget on the device that runs this at inference. TeTRA answers it with progressive quantization-aware training: start full precision, move the backbone to ternary weights and the embedding to binary as training progresses.</p>
+
+<div class="grid grid-cols-[1fr_1fr_1fr] gap-x-4 gap-y-2 mt-3 text-sm text-center">
+  <div class="text-left op-60 pb-2 border-b border-white/20"></div>
+  <div class="font-bold pb-2 border-b border-white/20">EigenPlaces (baseline)</div>
+  <div class="font-bold text-orange-400 pb-2 border-b border-white/20">TeTRA-BoQ</div>
+
+  <div class="text-left op-70 py-1 border-b border-white/10">Recall@1</div>
+  <div class="py-1 border-b border-white/10">86.7%</div>
+  <div class="py-1 border-b border-white/10 text-orange-400 font-bold">88.6% (+1.9 pts)</div>
+
+  <div class="text-left op-70 py-1 border-b border-white/10">Total latency</div>
+  <div class="py-1 border-b border-white/10">34 ms</div>
+  <div class="py-1 border-b border-white/10 text-orange-400 font-bold">22 ms (−35%)</div>
+
+  <div class="text-left op-70 py-1">Total memory</div>
+  <div class="py-1">700 MB</div>
+  <div class="py-1 text-orange-400 font-bold">215 MB (−69%)</div>
+</div>
+
+<p class="text-xs op-50 mt-2">Percent changes are vs EigenPlaces as the baseline.</p>
+
+<p class="source">TeTRA-VPR, 2025 (Fig. 4)</p>
+
+<!--
+"Deployment is the hard boundary here: a fixed memory and latency budget on whatever device runs this at inference. EigenPlaces, full precision: 86.7% Recall@1, 34 milliseconds, 700 megabytes. TeTRA-BoQ, trained with progressive quantization-aware training down to a ternary backbone and a binarized embedding: 88.6% Recall@1, 22 milliseconds, 215 megabytes. Sixty-nine percent less memory, thirty-five percent lower latency, both against EigenPlaces as the baseline, and recall goes up, not down."
+
+"That's the whole point of training it in: nobody is claiming post-training quantization would have lost recall here. TeTRA starts full precision and quantizes progressively during training, down to ternary weights and a binary embedding, so the model adapts to the precision it will actually ship at instead of getting quantized cold after the fact."
+
+"The next slide is about telling a designed-in constraint like this apart from a temporary scaffold."
+-->
+
+---
+
+# Three jobs, three design rules
+
+<div class="grid grid-cols-3 gap-6 mt-6 text-sm">
+  <div class="rounded-lg border border-white/15 bg-white/5 px-5 py-5">
+    <p class="text-lg font-bold mb-3">Shape learning</p>
+    <p>Hard-negative sampling (CliqueMining): changes what the loss sees, never has to survive inference.</p>
+  </div>
+  <div class="rounded-lg border border-white/15 bg-white/5 px-5 py-5">
+    <p class="text-lg font-bold mb-3">Scaffold</p>
+    <p>A hand-clustered vocabulary, absorbed by scale. Multi-vector flattened plus rerank (MUVERA), where the seam is already visible in the vendor docs.</p>
+  </div>
+  <div class="rounded-lg border border-white/15 bg-white/5 px-5 py-5">
+    <p class="text-lg font-bold mb-3">Hard boundary</p>
+    <p>A coverage target is a product requirement; the cutoff must be recalibrated whenever the retriever or the data changes. Quantisation: a fact about your memory budget.</p>
+  </div>
+</div>
+
+<p class="text-xl font-semibold text-center mt-8 leading-snug">A scaffold is allowed to be useful and temporary. Name the model limitation it covers, put a seam around it, and remove it when the capability gets absorbed. Keep real constraints hard.</p>
+
+<!--
+"Same three categories from the opening, now with names attached. The hand-clustered vocabulary was a scaffold, a guess about what the model couldn't do yet, and scale absorbed it. Late interaction and MUVERA are scaffolds with the seam already showing: Milvus and Vespa added native multi-vector support in the last two years, which is what a removable scaffold looks like mid-removal."
+
+"Quantisation isn't a scaffold: it's a fact about your hardware budget, not a guess about the model. The coverage target is a product requirement, and the cutoff that implements it isn't a fixed fact either — it has to be recalibrated whenever the retriever or the data changes, so it's not waiting to be absorbed."
+
+"A wrong guess about structure costs more than no structure at all, so name which one you're building before you build it."
+-->
+
+---
+layout: section
+---
+
+# The harness around an LLM
+
+Every generation of models pulls more of the harness behind the API. Which parts of yours are a scaffold, and which are a hard boundary?
+
+<p class="text-base op-70 mt-6">"We want AI agents that can discover like we can, not which contain what we have discovered." Sutton, 2019, and he meant it literally.</p>
+
+<!--
+"Now the part you're actually building. Everything so far was about a model you trained. Most of you are building around a model somebody else trains, and the same three jobs apply, shape learning, scaffold, hard boundary, just faster. Sutton's line about agents was a metaphor in 2019. It isn't now."
+-->
+
+---
+
+# What the harness absorbed, and what's still standing
+
+<div class="grid grid-cols-2 gap-8 mt-4 text-sm">
+  <div>
+    <p class="text-base font-bold text-orange-400 mb-3">Scaffolds models absorbed</p>
+    <ul class="space-y-2">
+      <li><strong>Prompted chain-of-thought, self-consistency, majority vote</strong> → reasoning trained in, with a thinking budget</li>
+      <li><strong>Regex over model text, retry loops</strong> → native function calling, schema-constrained output</li>
+      <li><strong>Hand-coded ReAct and browser-automation loops</strong> → computer use and built-in agent tools</li>
+      <li><strong>Chunk, embed, index, rerank by hand</strong> → long context and managed retrieval</li>
+    </ul>
+  </div>
+  <div>
+    <p class="text-base font-bold text-emerald-400 mb-3">Boundaries still standing</p>
+    <ul class="space-y-2">
+      <li><strong>Tool and data permissions</strong>: nothing absorbs a constraint that is about you</li>
+      <li><strong>Spend limits</strong>: a budget is a fact about you, not the model</li>
+      <li><strong>Evals, and a calibrated "when do I trust it"</strong>: the calibration slide again</li>
+    </ul>
+  </div>
+</div>
+
+<p class="source">vendor announcements and docs, read directly, September 2026: OpenAI, Anthropic, Google</p>
+
+<!--
+"Left column, in order: prompted chain-of-thought and self-consistency or majority-vote scripts went behind the API as reasoning trained into the model, o1 in September 2024, extended thinking in February 2025, a reasoning-effort knob in December 2024, a thinking budget in May 2025. Regex over model text and retry loops became native function calling, June 2023, and schema-constrained structured outputs, August 2024. Hand-coded ReAct and browser-automation loops became computer use, October 2024, and built-in agent tools in the Responses API, March 2025. Chunk, embed, index, rerank by hand became a million-token context window, February 2024, and managed file search, April and November 2024."
+
+"Right column: permissions and spend limits are facts about you, not guesses about the model, so nothing absorbs them. Evals and a calibrated trust threshold are the calibration slide again, just pointed at a different kind of output."
+-->
+
+---
+layout: center
+class: text-center
+---
+
+# The design rule
+
+<div class="text-2xl font-semibold leading-relaxed text-left inline-block mt-6">
+  <p>Use structure to shape learning.</p>
+  <p class="mt-4">Treat capability workarounds as scaffolds: modular and removable.</p>
+  <p class="mt-4">Keep permissions, budgets, data boundaries, and trust outside the model.</p>
+</div>
+
+<!--
+"Three lines. Spend your structure budget at training time, where it compounds. Every workaround for something the model can't do yet gets a seam and a removal trigger, a specific capability threshold or benchmark you can check, not just a date on a calendar. And the things that are facts about you, not guesses about the model, permissions, budgets, data boundaries, trust, never move inside."
+
+"My architecture didn't survive. My sampling scheme did. I wouldn't have guessed that in 2019, and I wouldn't have found out if I hadn't gone back and read my own thesis."
+
+Hand out the decision checklist. Sources in references.md for anyone who asks.
+-->
+
+---
+layout: center
+class: text-center
+---
+
+# Questions
+
+<p class="op-70">Decision checklist and full sources: ask me after.</p>
+
+---
+layout: section
+---
+
+# Backup
+
+---
+
+# How I hand-built a hierarchy: cluster the vocabulary
+
+<p class="text-sm op-70 mb-2">The tagging system from the opening. Its hierarchy is one level of clusters, and every knob was set by hand.</p>
+
+1. Cluster the tag vocabulary
+2. Number of clusters picked by hand: **5% of the vocabulary**
+3. A hand-derived formula: distance from the cluster centre → probability the tag is relevant
+4. Two hand-picked similarity functions underneath
+
+<p class="source">Image Annotation Retrieval with Text-Domain Label Denoising, ACM ICMR 2018</p>
+
+<!--
+Plain words, no jargon: "I clustered the tag vocabulary. I picked the number of clusters by hand, five percent of the vocabulary, because fewer made junk clusters and more made singletons. Then I invented a formula that turned distance-from-the-cluster-centre into probability-this-tag-is-relevant. Two hand-picked similarity functions underneath. Four guesses, stacked."
+-->
+
 ---
 
 # One tree, two geometries
 
-<p class="text-sm op-70 mb-2">A tree branching 3 ways has 3<sup>d</sup> nodes at depth d. Room in a plane grows like d<sup>2</sup>; in a hyperbolic disk, like e<sup>d</sup>.</p>
+<p class="text-sm op-70 mb-2">At depth d, a 3-way tree has 3<sup>d</sup> nodes. Give each level one unit of radius: a Euclidean plane supplies area proportional to d<sup>2</sup>; a hyperbolic plane supplies area proportional to e<sup>d</sup>.</p>
 
 <HierarchyCrowding />
 
+<p class="text-sm op-70 mt-2">This 2-D drawing shows same-depth separation in one radial layout. It does not prove an optimal embedding or claim that branch distances reorder.</p>
+
 <!--
-Arrow keys grow the tree one level per click; the slider goes to depth 5 for questions. Start with "different branches" selected.
+"Same tree on both sides, branching three ways. Left is an ordinary flat plane; right is a Poincaré disk, where the curved edges are that geometry's straight lines. Every leaf gets an equal-radius circle of room, measured in its own geometry's ruler."
 
-"Same tree on both sides, branching three ways, drawn with the same wedges. The left is an ordinary flat plane. The right is a Poincaré disk, and the curved edges are the straight lines of that geometry."
+"The slider grows the tree one level at a time. It opens at depth four, where the plane's circles already overlap completely and the disk's circles don't touch at all. Drag it down to watch the plane hold on a little longer at shallow depth, and back up to watch it collapse."
 
-"Two nodes, highlighted. The orange path is the tree: the edges you'd walk to get from one to the other. The dashed line is what an embedding gives you, the straight-line distance in that space. Watch what happens to it as we go deeper."
+"The general math behind this: a tree branching b ways has b to the d nodes at depth d, exponential growth. A fixed-dimensional Euclidean space only offers polynomial room at radius d. A hyperbolic space offers exponential room. That mismatch, tree against plane, is the whole reason this line of work exists."
 
-At depth 4, different branches: "The tree says these two are eight edges apart. The plane says 0.3. The disk says 1.6. The plane has folded a long tree path into a short jump, and nothing you train on top of it can unfold it."
+"Be careful about what this specific component does and doesn't show. It's a two-dimensional illustration of same-depth separation: can this geometry keep same-depth leaf cells from different branches apart as the tree gets bushy? It is not proof that any particular embedding is optimal, and it is not a claim that distances between branches ever reorder between the two geometries. At equal depth, they don't."
+-->
 
-Switch to siblings: "Two edges apart. Plane: 0.3 again. It cannot tell a sibling from a stranger. The disk gives both about the same too, and that's honest: the disk isn't perfect at this curvature. To keep all eight edges you'd push the leaves into the rim, and that's where float32 runs out. Hold that thought for the audit."
+---
 
-"And the circles: every leaf gets the same amount of room, half an edge, measured in each geometry's own ruler. In the plane they're on top of each other by depth four. In the disk they never touch. The room grows as fast as the tree does."
+# HierLoc: train the geographic hierarchy directly
 
-Do not claim that different branches end up closer than siblings in flat space but not in curved space. At a given depth, angular neighbours are the same distance apart in both geometries whatever their tree relationship; the difference is how much of a long path either geometry keeps.
+<p class="text-sm op-70 mb-2">HierLoc, 2026: country, region, subregion, and city each get their own entity embedding in Lorentz (hyperbolic) space. 240k entity embeddings stand in for 5M image embeddings.</p>
+
+<HierLocGains />
+
+<p class="source">HierLoc, 2026 (OSV-5M benchmark)</p>
+
+<!--
+"HierLoc, a geolocation system from this year. Instead of one flat image embedding, it builds a hierarchy of entity embeddings, country, region, subregion, city, in Lorentz space, and swaps five million image embeddings for two hundred forty thousand of those."
+
+"Accuracy at every level: country up 8.8%, region up 20.1%, subregion up 43.2%, city up 16.8%. Subregion is the biggest gain, not the deepest level, so it isn't monotonic with depth."
+
+"And the index is plain FAISS inner product. Their vectors are hyperbolic, Lorentz model, but Lorentz distance is an inner product with one sign flipped, so the serving stack never finds out. That's the shape structure has to take to survive inference."
+-->
+
+---
+
+# Do served hyperbolic embeddings use the curvature?
+
+<p class="text-sm op-70 mb-2">A separate 2026 audit measured how much curvature seven released hyperbolic vision-language checkpoints use: all seven land near u ≈ 0.2, deep in the near-Euclidean band.</p>
+
+<div class="grid grid-cols-[1.3fr_1fr] gap-6 items-center">
+  <img src="/figures/paper-hyperbolic-audit-hu-curve.png" alt="distortion factor vs dimensionless radius, near-Euclidean band, checkpoints near u=0.2" class="max-h-75 rounded bg-white" />
+  <div>
+    <p class="text-3xl font-bold text-orange-400">All seven sit in the near-flat band.</p>
+  </div>
+</div>
+
+<p class="source">Is the Geometry Doing the Work?, 2026; The Numerical Stability of Hyperbolic Representation Learning, 2022</p>
+
+<!--
+"This audit doesn't test HierLoc. It tests seven other released hyperbolic vision-language checkpoints: whether they actually use the curved space they were trained in."
+
+"The trained models sit in a nearly flat region of a space they're named after. The near-Euclidean threshold is u=0.84; every checkpoint tested lands around 0.2."
+
+"Separately, precision: float64 only represents points out to radius ≈38 in the Poincaré ball before rounding pushes them to the boundary. Deep trees need the rim, and the rim is where the float runs out."
+
+"So the honest version: hierarchy in the loss, still standing. Hyperbolic space as the thing you store and search, unresolved. I say that as someone who finds it beautiful."
+
+"That's where this line of work stands today: real gains in the loss function, an open question in the served index. Worth watching, not yet worth shipping unmodified."
 -->
 
 ---
@@ -224,60 +774,7 @@ Do not claim that different branches end up closer than siblings in flat space b
 <p class="source">Nickel & Kiela, Poincaré Embeddings for Learning Hierarchical Representations, 2017 (Fig. 2b)</p>
 
 <!--
-"That is the demo on real data, 2017. Mammals at the centre, species at the rim. Everyone who saw this figure wanted to store their taxonomy in it. Hold that thought."
--->
-
----
-layout: center
-class: text-center
----
-
-<p class="text-3xl font-semibold text-emerald-400">Where in your own systems do you have a tree<br>that you're storing flat?</p>
-
-<!--
-Expect: product catalogs, org charts, file paths, permission scopes, taxonomies, geo. Take two or three answers. This is the beat that makes the rest of the section land, because now it's their problem.
--->
-
----
-layout: default
----
-
-# The country → city tree in hyperbolic space
-
-<HierLocGains />
-
-<p class="text-sm op-70 mt-2">240k geographic-entity embeddings in place of 5M image embeddings. Gains at every level, largest at subregion.</p>
-
-<p class="source">HierLoc, 2026 (OSV-5M benchmark)</p>
-
-<!--
-"A geolocation system last year swapped five million image embeddings for two hundred forty thousand hierarchy embeddings: countries, regions, cities. Accuracy went up across the board: gains at every level, biggest at subregion, forty-three percent."
-
-"And the index is plain FAISS inner product. Their vectors are hyperbolic, Lorentz model, but Lorentz distance is an inner product with one sign flipped, so the serving stack never finds out. That's the shape structure has to take to survive inference."
-
-Backstage only if asked: HierLoc, ICLR 2026.
--->
-
----
-
-# Do served hyperbolic embeddings use the curvature?
-
-<p class="text-sm op-70 mb-2">HierLoc's gain comes from its training objective. A 2026 audit measured how much curvature seven released hyperbolic checkpoints use: the shaded band is near-Euclidean, the checkpoints sit at u ≈ 0.2, the threshold is 0.84.</p>
-
-<div class="grid grid-cols-[1.3fr_1fr] gap-6 items-center">
-  <img src="/figures/paper-hyperbolic-audit-hu-curve.png" alt="distortion factor vs dimensionless radius, near-Euclidean band, checkpoints near u=0.2" class="max-h-75 rounded bg-white" />
-  <div>
-    <p class="text-3xl font-bold text-orange-400">All seven sit in the near-flat band.</p>
-    <p class="text-sm op-70 mt-6">Separately, precision: float64 represents points only to radius ≈38 in the Poincaré ball and ≈19 in the Lorentz model before rounding pushes them to the boundary. Deep trees need the rim.</p>
-  </div>
-</div>
-
-<p class="source">Is the Geometry Doing the Work?, 2026; The Numerical Stability of Hyperbolic Representation Learning, 2022</p>
-
-<!--
-"The trained models sit in a nearly flat region of a space they're named after."
-
-"So the honest version: hierarchy in the loss, held. Hyperbolic space as the thing you store and search, unresolved. And I say that as someone who finds it beautiful."
+"The demo on real data, 2017. Mammals at the centre, species at the rim. Everyone who saw this figure wanted to store their taxonomy in it."
 -->
 
 ---
@@ -301,73 +798,19 @@ Say it before they do. "That's from prompting. Scale falls down in the tails. Wh
 
 ---
 
-# How 2018 built a hierarchy: cluster the vocabulary
+# Hubness: a few points recur across queries
 
-<p class="text-sm op-70 mb-2">The tagging system from the opening slide. Its hierarchy is one level of clusters, and every knob was set by hand.</p>
-
-1. Cluster the tag vocabulary
-2. Number of clusters picked by hand: **5% of the vocabulary**
-3. A hand-derived formula: distance from the cluster centre → probability the tag is relevant
-4. Two hand-picked similarity functions underneath
-
-<!--
-Plain words, no jargon: "I clustered the tag vocabulary. I picked the number of clusters by hand, five percent of the vocabulary, because fewer made junk clusters and more made singletons. Then I invented a formula that turned distance-from-the-cluster-centre into probability-this-tag-is-relevant. Two hand-picked similarity functions underneath. Four guesses, stacked."
--->
-
----
-
-# Hierarchy, graded
-
-<div class="grid grid-cols-[1fr_auto_auto] gap-x-10 gap-y-4 mt-8 text-xl">
-  <span>Hierarchy in the loss</span><span class="text-sm op-60">training</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Hyperbolic space as what you store</span><span class="text-sm op-60">inside</span><span class="text-purple-300 font-bold">unresolved</span>
-  <span>Hand-clustered vocabularies <span class="text-sm op-60">(mine, 2018)</span></span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-</div>
-
-<p class="text-sm op-70 mt-4">Middle column: where the structure lived. Training time, at the boundary between the model and the rest of the system, or inside the model's own job.</p>
-
----
-layout: section
----
-
-# Uncertainty
-
-Rules for what counts as similar were hand-set. What does a similarity score mean now?
-
----
-
-# Which of these do you show the user?
-
-<p class="text-sm op-70 mb-2">A real query against a real corpus: SciFact, 5,183 abstracts, bge-small-en-v1.5. The query asks about IL-2 and regulatory T cells. Top five by cosine, with the benchmark's relevance labels.</p>
-
-<img src="/figures/exp-e4-top5.png" alt="top five retrieved documents with cosine scores; relevant and non-relevant interleave" class="max-h-75 mx-auto rounded" />
-
-<p class="source">own experiment, talk/experiments/e4_real_scores.py; BEIR SciFact query 1029</p>
-
-<!--
-"Real scores, real labels. Relevant, relevant, not, relevant, not, and the whole spread is seven hundredths. What does 0.804 mean? Nothing. It doesn't mean 80% anything. And every one of you has hardcoded a threshold like this and moved on."
--->
-
----
-
-# Hubness: a few points are everyone's neighbour
-
-<p class="text-sm op-70 mb-2">Why a fixed cutoff fails: in high dimensions a few points score above any threshold against most queries, and most points against almost none.</p>
+<p class="text-sm op-70 mb-2">Some points appear unusually often in nearest-neighbour lists. <span class="text-xs">Radovanović et al., JMLR 2010; NeighborRetr, 2025.</span></p>
 
 <Hubness />
 
-<p class="text-xs op-50 mt-1">Radovanović et al., JMLR 2010; NeighborRetr, 2025</p>
 
 <!--
-Open at d=2 and drag the dimension slider right slowly.
+"Four hundred points; for each one, how many others count it among their ten nearest neighbours. Dimension is the only control, and it opens at 256, already showing the skewed distribution: the top 5% of points hold about 22% of all nearest-neighbour slots."
 
-"Four hundred points, and for each one I ask: how many other points count you among their ten nearest neighbours? In two dimensions that's a bump around ten, as you'd expect. Now watch it in the dimensions your embeddings actually live in."
+"Drag it down to 2 for the contrast, an ordinary bump around ten. Drag it back up to 512 and the skew sharpens further."
 
-At 256 or 512: "A handful of points are in everybody's list. Most points are in nobody's. Those are hubs, and the right-hand panel is why your threshold is broken: the hub scores above your cutoff against most queries, the typical point against almost none. Same 0.83, different meaning."
-
-"This is not a bug in your model. It's what high-dimensional geometry does to any point that sits a little closer to the middle of the cloud, and contrastive models have it. The fixes are training-time losses that penalise hubs, and a cheap rescoring wrapper at query time. Nobody fixes it in the index."
-
-Backstage: NNN (arXiv:2410.24114), QB-Norm, DBNorm (arXiv:2310.11612), Dual Bank Sinkhorn (arXiv:2508.02538), NeighborRetr (arXiv:2503.10526). Radovanović et al. 2010 for the original.
+"Those top points are hubs: they recur as a near neighbour across many different queries, far more often than a typical point does. The available fixes are training-time losses that penalise hubs, or a rescoring wrapper applied at query time."
 -->
 
 ---
@@ -382,372 +825,6 @@ Backstage: NNN (arXiv:2410.24114), QB-Norm, DBNorm (arXiv:2310.11612), Dual Bank
 
 <!--
 "Not a toy. This is CLIP on COCO. Left, the raw model: a few images are retrieved for hundreds of captions each. Right, after an additive correction computed from a bank of reference queries. Nothing about the index changed."
--->
-
----
-layout: center
-class: text-center
----
-
-<p class="text-3xl font-semibold text-emerald-400">How did you pick your similarity threshold?</p>
-
-<!--
-The honest answers (eyeballed it, copied it, tuned it once on a Tuesday) are the setup for the whole section. Let people be honest; be honest first if nobody volunteers.
--->
-
----
-layout: fact
----
-
-# 2–3×
-
-less context in the RAG prompt, same hit rate, on two RAG benchmarks.<br>The cutoff comes from a few hundred labelled examples and a percentile, not from the model.
-
-<img src="/figures/paper-conformal-rag-removal.png" alt="removal rate vs target coverage on two RAG benchmarks" class="max-h-60 mx-auto rounded bg-white mt-4" />
-
-<p class="source">Principled Context Engineering for RAG, 2025 (Fig. 2); CONFLARE, 2024</p>
-
-<!--
-"What won is a wrapper. You take a few hundred labelled examples, look at where the scores fall, and set the cutoff so you get the coverage you asked for. It's a calibration set and a percentile."
-
-"And it is principled. It's a statement about your data's statistics, not a guess about your task. It just doesn't touch your model, your embedding, or your index."
-
-Grade: absorbed, not free. The structure moved into the calibration layer.
-
-Monday action, say it plainly: "Go put a real threshold on your retriever this week. A calibration set and a percentile."
--->
-
----
-
-# The same recipe on a retriever that barely separates
-
-<p class="text-sm op-70 mb-2">SciFact, bge-small, 300 labelled queries split 150/150, 500 random splits. Coverage lands on target: 80.5%, 90.2%, 95.5%. The cost: guaranteeing every relevant document clears the cutoff on this corpus keeps about 22, 167, and 503 documents per query. A fixed top-10 keeps 10.</p>
-
-<img src="/figures/exp-e4-conformal.png" alt="calibration score distributions and coverage vs target with documents retained" class="max-h-80 w-full object-contain rounded" />
-
-<p class="source">own experiment, talk/experiments/e4_real_scores.py; BEIR SciFact</p>
-
-<!--
-"I ran the recipe. Coverage is exactly what the percentile promises, averaged over splits. Context reduction is not: the lowest relevant score and the highest non-relevant score overlap almost completely on this retriever, so a cutoff that keeps every relevant document keeps most of the corpus. The wrapper guarantees coverage. It cannot manufacture separation the embedding doesn't have. That is what 'absorbed, not free' means: the structure moved into a calibration layer, and the bill is a retriever good enough to threshold."
-
-Grade: calibrated thresholds, held; the saving is conditional on separation, and the slide says so.
--->
-
----
-
-# The other place to put uncertainty: in the vector
-
-<p class="text-sm op-70 mb-4">A photo with six tags is not one thing. Two 2018 rules for representing it anyway, one at pooling time and one at training time. Both mine.</p>
-
-<div class="grid grid-cols-2 gap-10 text-lg">
-  <div>
-    <p class="font-bold text-orange-400 mb-2">Pooling: weighted average of the tag vectors</p>
-    <p>Plain averaging failed on the poodle row from the opening slide. In the dissertation: "when the tag vectors are just averaged, the color word quickly overwhelms the model."</p>
-  </div>
-  <div>
-    <p class="font-bold text-orange-400 mb-2">Training: the subset rule</p>
-    <ul>
-      <li>A positive example is anything whose tags are a subset of mine</li>
-      <li>Margin fixed by hand</li>
-      <li>Training stalled, so a second loss term, weight also by hand</li>
-    </ul>
-  </div>
-</div>
-
-<!--
-"So far, uncertainty lives in the threshold. The other option is to put it in the vector itself. I tried that twice in 2018 without knowing that's what I was doing."
-
-"Left: I averaged tag word vectors to get one vector per photo, plain averaging kept the colour and lost the object, so I weighted the average. I wrote down the symptom and never named the mechanism. Right: training a triplet embedding for multi-label images, 'similar' isn't binary when one photo has six tags and another has three, so I called any subset a positive, fixed the margin by hand, and bolted on a second loss when training stalled."
-
-"The mechanism behind the left one is next. The principled version of the right one is after that."
--->
-
----
-
-# Why plain averaging fails
-
-<p class="text-sm op-70 mb-2">The mean of a set sits inside the hull. In high dimensions the members' differences cancel and only the shared component survives, which every stranger shares too. Same mechanism as mean pooling a document today.</p>
-
-<SetMean />
-
-<!--
-Open at n=6, d=2: "Six vectors, their convex hull, and their mean. The mean is inside the hull, by definition, and it's pulled toward the middle."
-
-Drag dimension up: "Now in the dimensions you actually use. Two things happen. The mean gets short, about one over root n, because the parts of the members that disagree cancel. And what's left is the part they all shared, which is also the part every stranger shares. So the mean ends up more similar to strangers than any of its members was."
-
-"That's what averaging tag vectors did to me in 2018: it kept the colour, which everything had, and cancelled the object. And it's what mean pooling does to a document today. Attention pooling is still a convex combination, it's still a point in the hull, it just learns which point. The learning happened at training time. The thing you serve is still one vector."
-
-Grade: mean pooling as a set representation, absorbed.
--->
-
----
-
-# The 2018 failure, with real vectors
-
-<p class="text-sm op-70 mb-2">Nearest MIRFlickr tags to the plain mean of the poodle's and the bird's five tags. GloVe, the 2018 vector type: blue and yellow enter the poodle's top ten, pink and purple the bird's; drop the colour word from the set and they vanish. A 2023 text model: the colour words stop intruding, and instead everything is close to everything: the gap between members and strangers shrinks from 0.51 to 0.17.</p>
-
-<img src="/figures/exp-e3-set-mean.png" alt="top-10 nearest vocabulary tags to the plain mean, GloVe vs bge" class="max-h-72 mx-auto rounded" />
-
-<p class="source">own experiment: GloVe 6B-300d, BAAI/bge-small-en-v1.5, 1,386-tag MIRFlickr vocabulary; talk/experiments/e3_set_mean.py</p>
-
-<!--
-"Same setup as 2018: pool the tag vectors, rank the vocabulary. With GloVe, the mean of red-dog-poodle-standard-standardpoodle has blue and yellow in its top ten. Take 'red' out of the set and they disappear. That is the sentence from my dissertation, measured. With a modern text model the colour words stop intruding, and instead everything is close to everything: members 0.84, the median stranger 0.67. That is the hull demo's second effect, and it is why your threshold slide exists."
--->
-
----
-
-# Learned distributions: results
-
-The principled version of the subset rule and of weighted averaging: learn a distribution instead of a point. Ambiguous items get wide regions, unambiguous items get tight ones.
-
-- Detecting randomly corrupted facts: 0.99 AUROC. <span class="text-orange-400">Under temporal drift: 0.52 to 0.64.</span>
-- Standard ANN indexes cannot compare distributions; the workaround (SLOSH) re-embeds them as ordinary vectors.
-
-So the served vector stays a point, and uncertainty stays in the threshold layer.
-
-<img src="/figures/paper-hib-corrupted.png" alt="Hedged Instance Embedding: ambiguous inputs map to wide Gaussians" class="max-h-44 mx-auto rounded bg-white mt-2" />
-
-<p class="source">Hedged Instance Embedding, 2018 (Fig. 3, the principled form); Decomposing Uncertainty in Probabilistic KG Embeddings, 2025; SLOSH, 2021</p>
-
-<!--
-"It's elegant. I love it. And the field's verdict on it is rough."
-
-"Drift over time is the only kind of drift you get in production."
-
-"Comparing two distributions properly is expensive enough that the standard workaround is to squash them back into ordinary vectors."
--->
-
----
-
-# Uncertainty, graded
-
-<div class="grid grid-cols-[1fr_auto_auto] gap-x-10 gap-y-4 mt-8 text-xl">
-  <span>Mean pooling as a set representation</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Learned distributions over points</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Hubness-aware scoring</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Calibrated thresholds</span><span class="text-sm op-60">boundary</span><span class="text-emerald-400 font-bold">held</span>
-</div>
-
----
-layout: section
----
-
-# Place recognition
-
-Semantic branches and attention modules were hand-wired into place-recognition embeddings. One 2018 paper, mine, every part graded.
-
-<!--
-Never cut this section.
-
-"After the PhD I worked on robot navigation. First paper: the embedding was the product. Second: the embedding fed a policy. Third: the embedding was a component inside a bigger learned system and nobody talked about it. And the last brown bag here was about embeddings as input to an LLM. Plumbing again."
-
-"So the trajectory of my own career is 'the embedding stopped being the deliverable.' Which makes this a strange talk for me to give. The reason I'm giving it anyway: plumbing has a geometry and a bill, and the bill is the part scale never pays."
--->
-
----
-
-# SAANE, 2018: the pipeline
-
-<p class="text-sm op-70 mb-2">The bet: a second network segments the scene (road, building, sky, tree) and tells the appearance network where to look, so the descriptor survives seasons and weather.</p>
-
-<img src="/figures/saane-pipeline.png" alt="2018 SAANE pipeline: two backbones, fusion, attention, pooling" class="max-h-90 mx-auto rounded bg-white" />
-
-<!--
-One sentence: "A second network segments the scene, road, building, sky, tree, and tells the appearance network where to look, so the descriptor survives seasons and weather."
--->
-
----
-
-# Seasons: Nordland
-
-<img src="/figures/saane-retrieval-nordland.png" alt="Nordland retrieval" class="max-h-100 mx-auto rounded bg-white" />
-
-<!--
-Seasonal change on Nordland. It worked.
--->
-
----
-
-# Where it breaks
-
-<img src="/figures/saane-supp-4.png" alt="attention failure case" class="max-h-100 mx-auto rounded bg-white" />
-
-<!--
-"Attention slides onto shadows when the semantic side is weak."
--->
-
----
-
-# 2023: off the shelf, no place-recognition training
-
-<p class="text-sm op-70 mb-2">AnyLoc: frozen DINOv2 features plus unsupervised VLAD, no place-recognition training, beats the VPR-trained methods across environments. The authors credit semantic structure the model learned without supervision; DINOv2's own figure shows it: PCA of patch features colours the same parts across images, no labels.</p>
-
-<div class="grid grid-cols-[1fr_1.6fr] gap-6 items-center">
-  <img src="/figures/paper-anyloc-radar.png" alt="AnyLoc: off-the-shelf features vs VPR-trained methods, Recall@1 across environments" class="max-h-80 mx-auto rounded bg-white" />
-  <img src="/figures/paper-dinov2-pca.jpg" alt="DINOv2 Fig. 1: PCA of patch features, matching parts colour-matched" class="max-h-80 mx-auto rounded bg-white" />
-</div>
-
-<p class="source">AnyLoc, 2023 (Fig. 1); DINOv2, 2023 (Fig. 1; Table 10: 49.0 mIoU on ADE20K, frozen features + linear head)</p>
-
-<!--
-Say the caveat out loud: "My paper reported a different metric than today's papers, so I'm not claiming a head-to-head. The trend on the shared benchmark is what's comparable, and the trend is not kind to me."
-
-Backstage: AnyLoc; DINOv2 frozen features + linear head, 49.0 mIoU on ADE20K, Table 10. Frozen + linear probe, not zero-shot.
--->
-
----
-
-# The 2018 frames through a frozen model
-
-<p class="text-sm op-70 mb-2">DINOv2, no labels, no place-recognition training. Third column: PCA of patch features per frame. Fourth: six k-means clusters fit jointly over the three frames, same colour = same cluster. Sky and road surface come out as consistent clusters across snow, night, and daylight; purity against the hand-wired map 54%, 54%, 68% (chance 8%).</p>
-
-<img src="/figures/exp-e9-dino-pca.png" alt="query frames, 2018 hand-wired segmentation, DINOv2 PCA, DINOv2 k-means" class="max-h-88 mx-auto rounded" />
-
-<p class="source">own experiment: facebook/dinov2-base at 896 px, talk/experiments/e9_dino_pca.py</p>
-
-<!--
-"These are the three query frames from the 2018 figures, through a frozen DINOv2 with nothing trained on top. Column three is a PCA of the patch features, column four is six clusters fit across all three frames at once. Sky is one cluster in all three. Road surface is one cluster in the two frames that have asphalt, and Nordland's rail ballast got its own cluster instead of being forced into 'road'. Purity against my twelve-class hand-wired map is in the fifties and sixties, chance is eight. The other four clusters are messier: texture and depth more than category. So: not my segmentation map, but the part of it that mattered for place recognition, sky and ground, for free."
--->
-
----
-
-# Smarter negatives: what CliqueMining does
-
-<p class="text-sm op-70 mb-2">The third thing in the 2018 paper, in a footnote: which negatives the model trains on. CliqueMining builds a graph of nearby, similar-looking places and samples training batches from cliques of them, so the hardest negatives are the ones a few hundred metres away.</p>
-
-<img src="/figures/paper-cliquemining-method.png" alt="CliqueMining: graph of candidate places, cliques as hard negatives" class="max-h-60 mx-auto rounded bg-white mt-6" />
-
-<p class="source">CliqueMining, 2024 (Fig. 4)</p>
-
-<!--
-"Graph on the left: places that are close together and look alike. Middle: sample cliques. Right: the batch is a set of near-identical places a few hundred metres apart, which is exactly what the network gets wrong. Nothing in the architecture changes."
--->
-
----
-
-# Smarter negatives, same network
-
-<VprProgress />
-
-<p class="text-sm op-70 mt-2">Same network, no layer changed; only the training negatives differ.</p>
-
-<p class="source">MixVPR, 2023; SALAD, 2023; CliqueMining, 2024; SelaVPR++, 2025</p>
-
-<!--
-"The thing that survived hardest wasn't in the architecture at all. Get smarter about which negative examples you show the model during training, same network, not one layer changed, and accuracy on the hardest seasonal benchmark jumps from seventy-six to ninety-one percent. That's a sampling trick. And a sampling trick is what I also had in that paper, in a footnote, as a detail."
-
-"I found that out by going back and reading my own thesis."
--->
-
----
-
-# SAANE, graded
-
-<div class="grid grid-cols-[1fr_auto_auto] gap-x-10 gap-y-4 mt-8 text-xl">
-  <span>Hand-wired semantic branch <span class="text-sm op-60">(SAANE)</span></span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Hand-designed attention module <span class="text-sm op-60">(SAANE; CricaVPR, BoQ today)</span></span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Hard-negative sampling <span class="text-sm op-60">(a SAANE footnote; CliqueMining today)</span></span><span class="text-sm op-60">training</span><span class="text-emerald-400 font-bold">held</span>
-</div>
-
-<!--
-"When I published, I credited most of the win to the semantic branch and a few points to the attention block. Seven years later: the big contribution is the one scale ate. The small one has children. Two of the leading systems today still hand-design an attention or aggregation mechanism, and it still earns its place."
-
-"My small idea outlived my big idea, and my footnote outlived both."
--->
-
----
-layout: center
-class: text-center
----
-
-<p class="text-3xl font-semibold text-emerald-400">What's in a footnote of your current project<br>that's doing the work?</p>
-
----
-layout: section
----
-
-# More than one vector
-
-A document is bigger than one vector. 2018 cut it into hand-sized windows. What does the field serve now?
-
-<!--
-"Every section so far served one vector per item and put the structure somewhere else. This section is the one place the field kept structure in the served representation, and what it costs."
--->
-
----
-
-# 2018: a document as three fixed windows
-
-<div class="grid grid-cols-2 gap-10 mt-4 text-lg">
-  <div>
-    <p class="font-bold text-orange-400 mb-2">The hand-built answer</p>
-    <ul>
-      <li>Documents cut into sliding windows</li>
-      <li>300 characters, 25% overlap, positions fixed by me</li>
-      <li>Three windows, justified in a commented-out line by analogy to RGB channels</li>
-      <li>Longer documents truncated at 5,000 characters "due solely to memory constraints"</li>
-    </ul>
-  </div>
-  <div>
-    <p class="font-bold text-emerald-400 mb-2">The question it was answering</p>
-    <ul>
-      <li>One vector per document loses everything a single point cannot hold</li>
-      <li>Mean pooling picks a point in the hull; attention pooling learns which point</li>
-      <li>Chunking decides in advance what a "unit" is</li>
-    </ul>
-  </div>
-</div>
-
-<p class="source">dissertation, chapter 1 (new_model.tex)</p>
-
-<!--
-"My text model in 2018. Three windows, fixed size, fixed overlap, and a comment in the source justifying three of them by analogy to RGB channels. Commented out, because even I didn't believe it. The question underneath is the one the set-mean slide raised: a document is not a point. Chunking is the hand-built answer, and every RAG pipeline in this building still does it."
--->
-
----
-
-# Late interaction: keep every token
-
-<p class="text-sm op-70 mb-2">ColBERT, 2020. Encode the query and the document into one vector per token. Score = sum over query tokens of the maximum similarity to any document token. No pooling; the document is stored as a set.</p>
-
-<img src="/figures/paper-colbert-paradigms.png" alt="representation-based, interaction, all-to-all, and late interaction" class="max-h-50 mx-auto rounded bg-white" />
-
-<p class="text-sm op-70 mt-3">Left: the single-vector model every earlier section served. Right: late interaction, which keeps the per-token vectors and defers the comparison to query time. ColBERTv2 on MS MARCO: MRR@10 39.7 against 38.8 for the best single-vector model in the same table.</p>
-
-<p class="source">ColBERT, 2020 (Fig. 2); ColBERTv2, 2022 (Table 4)</p>
-
-<!--
-"Panel a is everything so far: one vector each side, one dot product. Panel d keeps every token vector and does the matching late. No mean, no attention pooling, nothing chosen in advance. The document stays a set."
--->
-
----
-
-# ColPali: keep every patch, skip the text pipeline
-
-<p class="text-sm op-70 mb-2">The same idea on documents as images. Standard pipeline: OCR, layout detection, chunking, captioning, text embedding. ColPali: embed the page image, keep every patch, score with MaxSim. On ViDoRe, nDCG@5 averaged over ten tasks: best text pipeline 67.0, ColPali 81.3.</p>
-
-<img src="/figures/paper-colpali-pipeline.png" alt="standard OCR and chunking pipeline vs ColPali page-patch pipeline" class="max-h-70 mx-auto rounded bg-white" />
-
-<p class="source">ColPali, 2024 (Fig. 1; Table 2, CC0)</p>
-
-<!--
-"Documents as pictures. The top pipeline is what most document RAG looks like: OCR, layout, chunk, caption, embed, five hand-designed stages. The bottom one embeds the page and keeps a vector per patch. Fourteen points of nDCG on the benchmark, no text pipeline at all. That's the chunking slide, absorbed."
--->
-
----
-
-# Single vector vs late interaction, on the same corpus
-
-<p class="text-sm op-70 mb-2">SciFact, 300 queries. One 384-dim vector per document (bge-small) against one 96-dim vector per token (answerai-colbert-small, 236 tokens per document on average), both 33M-parameter encoders, exhaustive scoring.</p>
-
-<img src="/figures/exp-e11-late-interaction.png" alt="nDCG@10 and Recall@100, and bytes per document, single vector vs late interaction" class="max-h-70 mx-auto rounded" />
-
-<p class="text-sm op-70 mt-2">nDCG@10 0.713 → 0.746; Recall@100 0.942 → 0.956; MRR@10 0.682 → 0.719. Both numbers match each model's published SciFact score.</p>
-
-<p class="source">own experiment, talk/experiments/e11_late_interaction.py; BEIR SciFact</p>
-
-<!--
-"Same corpus as the threshold slides, same size encoders. Keep every token and the quality goes up three points of nDCG. The right-hand panel is the raw cost before anyone engineers it: sixty times the bytes in float16 with no compression. The next slide is what it costs served properly."
 -->
 
 ---
@@ -788,135 +865,6 @@ Backstage: PLAID at this corpus size is slower than exhaustive (246 ms) because 
 
 ---
 
-# Getting a set back into a flat index
-
-<p class="text-sm op-70 mb-2">MUVERA, 2024: compress each document's token set into one fixed-dimensional vector whose inner product approximates MaxSim, retrieve with an ordinary MIPS index, then rerank the candidates with exact MaxSim. Against PLAID, ColBERT's own multi-stage engine: on average 10% higher recall at 90% lower latency across BEIR.</p>
-
-<img src="/figures/paper-muvera-fde.png" alt="MUVERA two-stage pipeline vs PLAID four-stage pipeline" class="max-h-60 mx-auto rounded bg-white" />
-
-<p class="text-base mt-3">Third time in this talk: a curved distance became an inner product (HierLoc), a distribution became a vector (SLOSH), now a set of vectors becomes a vector. Structure inside the representation survives by moving to the boundary: the index sees one vector, the structure comes back at rerank.</p>
-
-<p class="source">MUVERA, 2024 (Fig. 1); Weaviate 1.31 ships it as the default multi-vector encoding</p>
-
-<!--
-"Two stages instead of four. The fixed-dimensional encoding is a single vector whose dot product approximates the multi-vector score. Off-the-shelf DiskANN does the retrieval. Exact MaxSim reranks the shortlist. That is the recipe every surviving inference-time structure in this talk has followed."
--->
-
----
-
-# More than one vector, graded
-
-<div class="grid grid-cols-[1fr_auto_auto] gap-x-10 gap-y-4 mt-8 text-xl">
-  <span>Late interaction as the served representation</span><span class="text-sm op-60">inside, with a stack built for it</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Multi-vector in the index <span class="text-sm op-60">(flattened to one vector plus a rerank)</span></span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Hand-chunked documents <span class="text-sm op-60">(mine, 2018; most RAG pipelines, 2026)</span></span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-</div>
-
-<!--
-"The one place the field kept structure in what it serves. It held, it wins on quality, it costs about seven times the storage once compressed, and to get into a production index it turns back into a single vector with the structure recovered at rerank. Same shape as HierLoc's sign flip and SLOSH's squash. That's the pattern."
--->
-
----
-layout: section
----
-
-# Cost
-
-Structure at inference time has to fit the index and the latency budget. What a production serving stack accepts.
-
-<!--
-Designated cut if discussion ran long.
--->
-
----
-
-# What production indexes support
-
-<IndexMetrics />
-
-<p class="source">FAISS wiki; DiskANN docs; Milvus 2.4 and 2.6.4 docs; Qdrant 1.10 notes; Elasticsearch 8.18 reference; Pinecone docs</p>
-
-<!--
-Source is the FAISS wiki, read directly. Same story everywhere: DiskANN three metrics, Milvus three metrics plus Hamming. That's the vendor telling you.
-
-"Nobody ships a curved index."
--->
-
----
-
-# Two-stage retrieval, then one-stage
-
-<p class="text-sm op-70 mb-2">Inference-time structure in place recognition: geometric verification, then a learned reranker, then none.</p>
-
-- 2021, Patch-NetVLAD: top-100 retrieval, then RANSAC verification, about **15 s per query**
-- 2023, R²Former: a learned reranker replaces RANSAC
-- 2024, SelaVPR: reranking at about **3%** of the RANSAC cost
-- 2024, BoQ: single-stage retrieval beats the two-stage methods
-
-<p class="source">Patch-NetVLAD, 2021; A Faster, Lighter and Stronger…, 2022; R²Former, 2023; SelaVPR, 2024; BoQ, 2024</p>
-
-<!--
-"The boundary is training time versus inference time."
--->
-
----
-
-# 2-bit backbone, binary vector
-
-<div class="grid grid-cols-3 gap-8 text-center my-10">
-  <div><div class="text-6xl font-bold text-emerald-400">−69%</div><div class="text-sm op-70 uppercase tracking-wide mt-2">memory</div></div>
-  <div><div class="text-6xl font-bold text-emerald-400">−35%</div><div class="text-sm op-70 uppercase tracking-wide mt-2">latency</div></div>
-  <div><div class="text-6xl font-bold text-emerald-400">0</div><div class="text-sm op-70 uppercase tracking-wide mt-2">recall lost</div></div>
-</div>
-
-<p class="text-sm op-70">Matryoshka training vs. plain truncation of the vector: no difference until about 70% compression.</p>
-
-<p class="source">TeTRA-VPR, 2025; To MRL or not to MRL, 2026</p>
-
-<!--
-"Quantise the model to two bits, binarise the output vector. That's the shape of a real win in 2026, and no amount of model scale gives it to you."
--->
-
----
-
-# The trade-off, measured on Tokyo 24/7
-
-<p class="text-sm op-70 mb-2">Three TeTRA variants against float baselines, full pipeline. Accuracy stays in the same band; latency and memory drop. The one that matters is TeTRA-BoQ against EigenPlaces: better recall, a third of the memory.</p>
-
-<img src="/figures/paper-tetra-tradeoff.jpg" alt="Accuracy, latency, and memory by model on Tokyo 24/7" class="max-h-85 mx-auto rounded bg-white" />
-
-<p class="source">TeTRA-VPR, 2025 (Fig. 4)</p>
-
----
-
-# Scoreboard
-
-<div class="grid grid-cols-[1fr_auto_auto] gap-x-10 gap-y-1.5 text-base">
-  <span class="op-60 text-xs">structure</span><span class="op-60 text-xs">where it lived</span><span class="op-60 text-xs">grade</span>
-  <span>Hierarchy in the loss</span><span class="text-sm op-60">training</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Hyperbolic space as what you store</span><span class="text-sm op-60">inside</span><span class="text-purple-300 font-bold">unresolved</span>
-  <span>Hand-clustered vocabularies</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Mean pooling as a set representation</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Learned distributions over points</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Hubness-aware scoring</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Calibrated thresholds</span><span class="text-sm op-60">boundary</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Hand-wired semantic branches</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Hand-designed attention modules</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Hard-negative sampling</span><span class="text-sm op-60">training</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Hand-chunked documents</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Late interaction as the served representation</span><span class="text-sm op-60">inside, with a stack built for it</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Multi-vector in the index</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Quantisation and the cost side</span><span class="text-sm op-60">boundary</span><span class="text-emerald-400 font-bold">held</span>
-</div>
-
-<p class="text-sm op-70 mt-3">Every "held" lived at training time or at the boundary. Every "absorbed" lived inside the model's job. "Absorbed, not free" is the ones that moved out to the boundary and kept the bill. One exception, and the field built a serving stack to earn it.</p>
-
-<!--
-Read down it in fifteen seconds. No citations.
--->
-
----
-
 # Structure vs. scale, measured
 
 <div class="grid grid-cols-2 gap-8 mt-2">
@@ -933,142 +881,19 @@ Read down it in fifteen seconds. No citations.
 <p class="source">Scaling Laws and Symmetry, 2025; Does equivariance matter at scale?, 2024; Transformers Discover Molecular Structure Without Graph Priors, 2025</p>
 
 <!--
-"This is the live argument in 2025, and it is not settled. Left: in force fields, the constraint changes the exponent, and the gap widens with compute. Right: with transformers, augmentation gets the baseline most of the way, and a big plain transformer matches the equivariant model at equal compute, having learned the symmetry itself. Both are true. The three questions on the next slide are how to tell which case you are in."
+"This is the live argument in 2025, and it is not settled. Left: in force fields, the constraint changes the exponent, and the gap widens with compute. Right: with transformers, augmentation gets the baseline most of the way, and a big plain transformer matches the equivariant model at equal compute, having learned the symmetry itself. Both are true. The difference is whether the constraint is exact and whether augmented data can fake it."
 -->
-
----
-
-# Three questions before you build structure
-
-1. Is the constraint **exact**, or is it your best guess about what the model can't do yet?
-2. Is your budget **fixed**, or can you throw more data and compute at it?
-3. Could **augmented data** teach the model the same thing?
-
-If it's exact, your budget is fixed, and augmentation can't fake it, build it, and build it at the boundary. Otherwise wait for the next general model.
-
-<p class="text-orange-400 mt-6">Constraining a model with the wrong structure is measurably worse than not constraining it at all.</p>
-
-<p class="source">Measuring the Symmetry–Data Exchange Rate, 2026</p>
-
-<!--
-"Structure is a bet. Wrong structure costs more than no structure. Otherwise wait; the next model probably eats it." Backstage: symmetry-data exchange rate paper, CI excludes zero.
--->
-
----
-layout: section
----
-
-# The same scoreboard, for the harness around an LLM
-
-Every generation of models pulls more of the harness behind the API. Which parts of yours are inside the model's job?
-
-<p class="text-base op-70 mt-6">"We want AI agents that can discover like we can, not which contain what we have discovered." Sutton, 2019, and he meant it literally.</p>
-
-<!--
-"Now the part you're actually building. Everything in this talk was about a model you trained. Most of you are building around a model somebody else trains, and the same thing is happening to your scaffolding, faster. Sutton's line about agents was a metaphor in 2019. It isn't now. And his timescale, 'over a slightly longer time than a typical research project, massively more computation inevitably becomes available', is about eighteen months in this table."
--->
-
----
-
-# Harness structure, 2022 to 2024, graded in 2026
-
-<div class="grid grid-cols-[1fr_1.1fr_auto_auto] gap-x-6 gap-y-2 text-base mt-2">
-  <span class="op-60 text-xs">hand-built</span><span class="op-60 text-xs">absorbed by</span><span class="op-60 text-xs">where it lived</span><span class="op-60 text-xs">grade</span>
-  <span>Prompted chain-of-thought, "think step by step"</span><span class="text-sm op-80">reasoning trained in: o1 (2024-09), extended thinking with a budget (2025-02)</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Regex over model text, "respond in JSON", retry loops</span><span class="text-sm op-80">native function calling (2023-06), schema-constrained structured outputs (2024-08)</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Self-consistency, majority vote, best-of-n scripts</span><span class="text-sm op-80">a reasoning-effort knob (2024-12), a thinking budget (2025-05)</span><span class="text-sm op-60">inside</span><span class="text-orange-400 font-bold">absorbed</span>
-  <span>Hand-coded ReAct and browser-automation loops</span><span class="text-sm op-80">computer use trained in (2024-10), RL-trained GUI agent (2025-01), built-in tools in the API (2025-03)</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-  <span>Chunk, embed, index, rerank, by hand</span><span class="text-sm op-80">1M-token context (2024-02); managed file search (2024-04, 2025-11); late interaction</span><span class="text-sm op-60">inside → boundary</span><span class="text-orange-400 font-bold">absorbed, not free</span>
-</div>
-
-<p class="text-sm op-70 mt-4">Everything written to do the model's thinking for it went behind the API, roughly eighteen months each.</p>
-
-<p class="source">vendor announcements and docs, read directly, September 2026: OpenAI, Anthropic, Google</p>
-
-<!--
-"Same table, same three words. Everything you wrote to do the model's thinking for it, prompted reasoning, output parsing, voting, the planning loop, is inside the model's job, and it went behind the API in about eighteen months each. Retrieval and the agent loop moved out to the boundary and you still pay for them: budgets, stop conditions, the index."
--->
-
----
-
-# Harness structure: what is still standing
-
-<div class="grid grid-cols-[1fr_1.1fr_auto_auto] gap-x-6 gap-y-3 text-base mt-2">
-  <span class="op-60 text-xs">hand-built</span><span class="op-60 text-xs">vendor's version</span><span class="op-60 text-xs">where it lives</span><span class="op-60 text-xs">grade</span>
-  <span>Hand-built guardrail classifiers</span><span class="text-sm op-80">vendor-trained constitutional classifiers (2025-02)</span><span class="text-sm op-60">boundary</span><span class="text-purple-300 font-bold">unresolved</span>
-  <span>Long-term memory over a vector store</span><span class="text-sm op-80">consumer memory (2024-02); no developer-API equivalent verified</span><span class="text-sm op-60">boundary</span><span class="text-purple-300 font-bold">unresolved</span>
-  <span>Tool boundaries, permissions, spend caps</span><span class="text-sm op-80">nothing; the model cannot absorb a constraint that is about you</span><span class="text-sm op-60">boundary</span><span class="text-emerald-400 font-bold">held</span>
-  <span>Evals, and a calibrated "when do I trust it"</span><span class="text-sm op-80">nothing; the calibration slide again</span><span class="text-sm op-60">boundary</span><span class="text-emerald-400 font-bold">held</span>
-</div>
-
-<p class="text-sm op-70 mt-4">What held is the boundary: the permissions, the spend cap, the eval, the threshold you calibrated.</p>
-
-<p class="source">vendor announcements and docs, read directly, September 2026: OpenAI, Anthropic, Google</p>
-
-<!--
-"What held is the boundary: the permissions, the spend cap, the eval, the threshold you calibrated. Nobody's model can absorb a constraint that is about your product."
-
-"Guardrails and memory: the vendors are shipping them, and I don't think it's settled whether the boundary version or the vendor version wins. Unresolved."
--->
-
----
-
-# Three questions, for a harness
-
-1. Is this piece a **fact about your system** (a permission, a budget, a data boundary), or a **guess about what the model can't do yet**?
-2. Is your budget **fixed**, or will the next model generation arrive before this ships?
-3. Could the **next model** learn it, given the trend of the last three?
-
-<p class="text-lg mt-6">A fact about your system lives at the boundary; build it and keep it. A guess about the model lives inside its job; build it if you must, label it, and make it unpluggable.</p>
-
-<p class="text-orange-400 mt-6">The failure runs both ways: 2018 treated a guess as architecture. The other mistake is letting the model absorb something that should have stayed a hard boundary.</p>
-
-<!--
-"Crutches are fine. The 2018 systems in this talk were crutches and they shipped. Know which kind each one is. A guess about the model is temporary: put a seam around it so the day the API does it, you delete a file. A fact about your system is not temporary, and the risk there is the opposite one: the model gets good enough that you stop checking, and the constraint quietly moves inside."
--->
-
----
-layout: center
-class: text-center
----
-
-<p class="text-3xl font-semibold">Put structure in training: the loss, the sampler, the curriculum.</p>
-
-<p class="text-3xl font-semibold text-emerald-400 mt-6">Serve flat, quantised vectors in a standard index.</p>
-
-<p class="text-3xl font-semibold text-emerald-400 mt-6">Keep the harness thin: the boundaries you own, the evals you trust, everything else replaceable.</p>
-
-<!--
-"Spend your structure budget at training time, where it compounds. Keep inference boring, flat, and quantised; that is the only shape the serving stack accepts. And when the model is somebody else's: own the boundary, measure the trust, and keep every crutch inside the model's job labelled and unplugged-able. My architecture didn't survive. My sampling scheme did. I wouldn't have guessed that in 2019, and I wouldn't have found out if I hadn't gone back and read my own thesis."
-
-Hand out the decision checklist. Sources in references.md for anyone who asks.
--->
-
----
-layout: center
-class: text-center
----
-
-# Questions
-
-<p class="op-70">Decision checklist and full sources: ask me after.</p>
-
----
-layout: section
----
-
-# Backup
 
 ---
 
 # Phase carries the shape
 
-<p class="text-sm op-70 mb-2">Two photos, Fourier transformed, spectra swapped. Each hybrid looks like the image whose phase it carries: correlation 0.69 and 0.74 with the phase donor, 0.02 and 0.01 with the magnitude donor. Structure that is a fact about the data: the exact-constraint case of the decision rule.</p>
+<p class="text-sm op-70 mb-2">Two photos, Fourier transformed, spectra swapped. Each hybrid looks like the image whose phase it carries: correlation 0.69 and 0.74 with the phase donor, 0.02 and 0.01 with the magnitude donor. Structure that is a fact about the data, not a guess about the model.</p>
 
 <img src="/figures/exp-e5-phase-swap.png" alt="magnitude and phase swap between the poodle and bird photos" class="max-h-75 mx-auto rounded" />
 
 <p class="source">Oppenheim & Lim, 1981; own reproduction, talk/experiments/e5_phase_swap.py</p>
 
 <!--
-Only if asked "when is structure exact?". "The 1981 experiment. Keep one picture's magnitudes and the other's phases, invert. You see the phase donor every time. Complex-valued networks win on radar, MRI, and speech because phase is the signal; feed it as two real channels and independent scaling corrupts exactly this."
+Only if asked "when is a constraint exact, not a scaffold?". "The 1981 experiment. Keep one picture's magnitudes and the other's phases, invert. You see the phase donor every time. Complex-valued networks win on radar, MRI, and speech because phase is the signal; feed it as two real channels and independent scaling corrupts exactly this."
 -->

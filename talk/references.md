@@ -91,7 +91,7 @@ A **do-not-use** list is at the bottom: claims that failed verification and must
 | Source | What it establishes |
 |---|---|
 | arXiv:1812.03402 (2018-12-08) *Semantically-Aware Attentive Neural Embeddings for Image-based Visual Localization* (SAANE, BMVC 2019) | The defendant. Reports AUC, not Recall@1 — not interconvertible with modern numbers. |
-| arXiv:2308.00688 (2023-08-01) *AnyLoc: Towards Universal Visual Place Recognition* | Off-the-shelf DINOv2 plus VLAD, **no VPR training**; +6% credited to semantic properties that emerged **without supervision**. The prosecution's key witness. |
+| arXiv:2308.00688 (2023-08-01) *AnyLoc: Towards Universal Visual Place Recognition* | Off-the-shelf DINOv2 plus VLAD, **no VPR training**. Tables III-IV, average Recall@1 — structured environments: NetVLAD 62.5, CosPlace 77.0, MixVPR 83.9, AnyLoc-VLAD-DINOv2 86.5; unstructured environments: NetVLAD 31.1, CosPlace 29.3, MixVPR 33.2, AnyLoc-VLAD-DINOv2 65.0. +6% credited to semantic properties that emerged **without supervision**. The prosecution's key witness. |
 | arXiv:2311.15937 (2023-11-27) *Optimal Transport Aggregation for Visual Place Recognition* (SALAD) | DINOv2 backbone, Sinkhorn assignment. Nordland R@1 76.0%, MSLS-val 91.9%. |
 | arXiv:2502.16601 (2025-02-23) *SelaVPR++* | Nordland R@1 97.2%; binary hashes for retrieval, float features for rerank. |
 | arXiv:2407.02422 (2024-07-02) *Close, But Not There: Boosting Geographic Distance Sensitivity in Visual Place Recognition* (CliqueMining) | **Nordland R@1 76% → 90% with zero architectural change** — pure hard-negative graph sampling. The talk's strongest single finding. |

@@ -15,7 +15,7 @@ const COLOR_CALM = '#54d6b4'
 const COLOR_WARN = '#e8894a'
 const COLOR_ACCENT = '#6fd3ff'
 
-const dimIndex = ref(0)
+const dimIndex = ref(DIMS.indexOf(256))
 const d = computed(() => DIMS[dimIndex.value])
 
 const canvas = ref<HTMLCanvasElement>()

@@ -53,7 +53,7 @@ const bars = computed(() => {
 <template>
   <div class="hierloc-gains">
     <svg :width="WIDTH" :height="HEIGHT" :viewBox="`0 0 ${WIDTH} ${HEIGHT}`">
-      <text class="title" :x="MARGIN_LEFT" y="26">HierLoc accuracy gain by level</text>
+      <text class="title" :x="MARGIN_LEFT" y="26">Accuracy gain over image-embedding baseline</text>
 
       <g class="gridlines">
         <template v-for="g in GRIDLINES" :key="g">

@@ -34,6 +34,13 @@ embedding model) -- this script:
   4. Reports the gap between (a) the average cosine of the mean to its own
      members and (b) the median cosine of the mean to the rest of the
      vocabulary -- the geometric mechanism behind the failure.
+
+Also emits a compact browser fixture (talk/public/data/set-mean-vocab.json +
+set-mean-vocab.f32) for the SetMean.vue slide component: every MIRFlickr
+vocabulary word's raw bge-small-en-v1.5 embedding (384-d, for exact cosine
+search in the browser) plus a single fixed 2-component PCA projection of the
+same embeddings (for display only -- never used for the nearest-neighbour
+search).
 """
 
 from __future__ import annotations
@@ -59,6 +66,8 @@ RESULTS_DIR = EXPERIMENTS_DIR / "results"
 FIGURES_DIR = EXPERIMENTS_DIR.parent / "public" / "figures"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR = EXPERIMENTS_DIR.parent / "public" / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 GLOVE_MODEL_NAME = "glove-wiki-gigaword-300"
 BGE_MODEL_NAME = "BAAI/bge-small-en-v1.5"
@@ -84,6 +93,10 @@ TAG_SETS = {
         "colour_word": "yellow",
     },
 }
+
+# The bird tag set is the slide's real interactive example.
+QUERY_IMAGE_PATH = "/figures/kcca-amigurumi-query.jpg"
+INITIAL_TAGS = TAG_SETS["bird"]["members"]
 
 # Per Main's explicit list: named colours plus colour/color spelling variants
 # present in the MIRFlickr vocabulary.
@@ -169,6 +182,85 @@ def bge_candidate_vectors(vocab: list[str], model: SentenceTransformer) -> tuple
     )
     vectors = {w: np.asarray(v, dtype=np.float64) for w, v in zip(vocab, embeddings)}
     return vectors, []
+
+
+def pca_fit_transform(x: np.ndarray, n_components: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Mean-center and SVD. Axis signs are fixed deterministically -- each
+    retained component is flipped, if needed, so its largest-magnitude
+    loading is positive -- so the projection does not depend on SVD's
+    arbitrary sign convention. Returns (scores[N, n_components],
+    components[n_components, D], explained_variance_ratio[n_components])."""
+    centered = x - x.mean(axis=0)
+    _u, s, vt = np.linalg.svd(centered, full_matrices=False)
+    components = vt[:n_components].copy()
+    for i in range(n_components):
+        j = int(np.argmax(np.abs(components[i])))
+        if components[i, j] < 0:
+            components[i] *= -1
+    scores = centered @ components.T
+    explained_variance = (s**2) / (x.shape[0] - 1)
+    explained_variance_ratio = explained_variance / explained_variance.sum()
+    return scores, components, explained_variance_ratio[:n_components]
+
+
+def write_browser_fixture(vocab: list[str], bge_candidates: dict[str, np.ndarray], bge_dim: int) -> Path:
+    """Emits the compact browser fixture consumed by SetMean.vue:
+      - set-mean-vocab.f32: every MIRFlickr vocabulary word's raw
+        bge-small-en-v1.5 embedding, float32, row-major, one row per word in
+        `vocab` order -- the only thing the browser's cosine search touches.
+      - set-mean-vocab.json: that same vocabulary order, a fixed 2-component
+        PCA projection of the same embeddings for display only, and the
+        initial example (image + tags) and provenance.
+    """
+    vectors = np.stack([bge_candidates[w] for w in vocab])
+    scores, _components, evr = pca_fit_transform(vectors, n_components=2)
+
+    bin_path = DATA_DIR / "set-mean-vocab.f32"
+    vectors.astype("<f4").tofile(bin_path)
+
+    metadata = {
+        "provenance": {
+            "generated_by": "talk/experiments/e3_set_mean.py",
+            "seed": SEED,
+            "model": BGE_MODEL_NAME,
+            "dim": bge_dim,
+            "vocab_source_file": "talk/experiments/results/mirflickr_vocab.txt",
+        },
+        "vocab_size": len(vocab),
+        "vocabulary": vocab,
+        "vectors": {
+            "file": "/data/set-mean-vocab.f32",
+            "dtype": "float32",
+            "byte_order": "little-endian",
+            "shape": [len(vocab), bge_dim],
+            "row_order_matches": "vocabulary",
+            "note": (
+                "raw (unnormalised) bge-small-en-v1.5 sentence embeddings, one row "
+                "per vocabulary word in the same order as `vocabulary`. This is the "
+                "original 384-d space: the nearest-neighbour search runs here, by "
+                "cosine, never on the 2-d projection below."
+            ),
+        },
+        "projection": {
+            "method": (
+                "PCA, 2 components, fit once (via full SVD) on all vocabulary "
+                "embeddings; axis signs fixed by making each component's "
+                "largest-magnitude loading positive"
+            ),
+            "explained_variance_ratio": [float(v) for v in evr],
+            "coordinates": [[float(row[0]), float(row[1])] for row in scores],
+            "coordinate_order_matches": "vocabulary",
+            "note": "for display only -- not used for the nearest-neighbour search.",
+        },
+        "initial_example": {
+            "image": QUERY_IMAGE_PATH,
+            "tags": INITIAL_TAGS,
+            "note": TAG_SETS["bird"]["query_note"],
+        },
+    }
+    meta_path = DATA_DIR / "set-mean-vocab.json"
+    meta_path.write_text(json.dumps(metadata, indent=2))
+    return meta_path
 
 
 def rank_candidates(mean_vec: np.ndarray, candidate_vectors: dict, topn: int = 10):
@@ -340,6 +432,9 @@ def main() -> None:
     bge_candidates, bge_skipped = bge_candidate_vectors(vocab, bge)
     print(f"GloVe: {len(glove_skipped)} / {len(vocab)} candidate tags not in GloVe vocab, skipped")
     print(f"bge: {len(bge_skipped)} / {len(vocab)} candidate tags skipped")
+
+    fixture_path = write_browser_fixture(vocab, bge_candidates, int(bge.get_embedding_dimension()))
+    print(f"Wrote {fixture_path}")
 
     figure_data: dict[str, dict[str, dict]] = {}
     results: dict = {
