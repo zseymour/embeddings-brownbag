@@ -12,7 +12,7 @@ layout: cover
 
 # On Uses of Neural Embeddings and the Bitter Lesson
 
-What the embedding systems I built taught me about scaffolds and hard boundaries
+
 
 <!--
 Title, subtitle, then: "This is a talk about being wrong in public, and about the parts of the embedding systems I built that turned out not to be wrong."
@@ -59,7 +59,7 @@ Set the norm now: "Interrupt me. If something sounds like nonsense, it might be,
 
 # The same photos through a zero-shot model
 
-<p class="text-sm op-70 mb-2">CLIP ViT-B/32, one line, ranking the same 1,386-tag MIRFlickr vocabulary. No kernels, no clustering, no pooling rule. The owl fails the same way this system failed: the photo is a shelf of crafts, and the models describe the shelf.</p>
+<p class="text-sm op-70 mb-2">CLIP ViT-B/32, ranking the same 1,386-tag MIRFlickr vocabulary. No kernels, no clustering, no pooling rule. The "owl" fails the same way this system failed: the photo is a shelf of crafts, and the models describe the shelf.</p>
 
 <img src="/figures/exp-e1-zero-shot-tags.png" alt="zero-shot top-5 tags for the poodle, bird, and owl photos" class="max-h-80 mx-auto rounded" />
 
@@ -145,7 +145,7 @@ layout: section
 
 # What can one vector preserve?
 
-A photo has six tags. A document has ten thousand words. One vector has to speak for all of it.
+A photo has six tags. A document has ten thousand words. Does one vector speak for all of it?
 
 <!--
 "Every system in this act puts one item through one encoder and gets one vector back. The question is what that one vector can hold before it runs out of room, and where the field put the parts that didn't fit."
@@ -153,21 +153,21 @@ A photo has six tags. A document has ten thousand words. One vector has to speak
 
 ---
 
-# Two hand-built fixes for one photo, six tags
+# Two hand-built fixes for one photo w/ six tags
 
-<p class="text-sm op-70 mb-4">A photo with six tags is not one thing. Two hand-built rules for representing it anyway, one at pooling time and one at training time. Both mine, both from the same annotation project.</p>
+<p class="text-sm op-70 mb-4">A photo with six tags is not one thing. Two hand-built rules for representing it anyway, one at pooling time and one at training time. Mine: from the same image annotation works.</p>
 
 <div class="grid grid-cols-2 gap-10 text-lg">
   <div>
     <p class="font-bold text-orange-400 mb-2">Pooling: weighted average of the tag vectors</p>
-    <p>Plain averaging failed on the poodle row from the opening. "When the tag vectors are just averaged, the color word quickly overwhelms the model."</p>
+    <p>Plain averaging failed on the poodle row from the opening: "When the tag vectors are just averaged, the "color" word quickly overwhelms the representation."</p>
   </div>
   <div>
     <p class="font-bold text-orange-400 mb-2">Training: the subset rule</p>
     <ul>
       <li>A positive example is anything whose tags are a subset of mine</li>
       <li>Margin fixed by hand</li>
-      <li>Training stalled, so a second loss term, weight also by hand</li>
+      <li>Add additional regularization, also weighted also by hand</li>
     </ul>
   </div>
 </div>
@@ -200,7 +200,7 @@ A photo has six tags. A document has ten thousand words. One vector has to speak
 
 # Learned distributions: the principled fix
 
-<p class="text-sm op-70 mb-2">The principled version of both hand-built fixes: learn a distribution instead of a point, wide for ambiguous items, tight for unambiguous ones. Standard ANN indexes cannot compare distributions, so the workaround (SLOSH) re-embeds them as ordinary points before they ever reach an index.</p>
+<p class="text-sm op-70 mb-2">The principled version of this: learn a distribution instead of a point, wide for ambiguous items, tight for unambiguous ones. Standard ANN indexes cannot compare distributions, so the workaround (SLOSH) re-embeds them as ordinary points before they ever reach an index.</p>
 
 <img src="/figures/paper-hib-corrupted.png" alt="Hedged Instance Embedding: ambiguous inputs map to wide Gaussians" class="max-h-72 mx-auto rounded bg-white mt-2" />
 
@@ -214,29 +214,39 @@ A photo has six tags. A document has ten thousand words. One vector has to speak
 
 ---
 
-# Fixed windows commit before the query arrives
+# Documents need two decisions before retrieval
 
-<div class="grid grid-cols-2 gap-10 mt-6 text-lg items-start">
+<p class="text-sm op-70 mb-4">Arbitrary user-generated text has length, structure, and a source. Before retrieval, a pipeline must turn it into units that a model and an index can serve.</p>
+
+<div class="grid grid-cols-2 gap-10 text-lg items-start">
   <div>
-    <p class="font-bold text-orange-400 mb-2">My 2019 pipeline</p>
+    <p class="font-bold text-orange-400 mb-2">Choose the retrieval unit</p>
     <ul>
-      <li>Three 300-character windows</li>
-      <li>25% overlap</li>
-      <li>Truncate after 5,000 characters</li>
+      <li>Document, section, message, or window?</li>
+      <li>Keep its heading and link back to its source</li>
+      <li>Bound input length and serving cost</li>
     </ul>
   </div>
   <div>
-    <p class="font-bold text-emerald-400 mb-2">The lasting problem</p>
-    <p>Any fixed boundary can split the evidence a query needs. A different window only moves the split.</p>
+    <p class="font-bold text-emerald-400 mb-2">Choose its representation</p>
+    <ul>
+      <li>Pool the passage into one vector</li>
+      <li>Or retain token vectors for later matching</li>
+      <li>Let the query decide which terms matter</li>
+    </ul>
   </div>
 </div>
+
+<p class="mt-5">My 2016-era pipeline chose three 300-character windows with 25% overlap, then truncated after 5,000 characters. That was one unit policy, not the whole problem. Once we choose a passage, do we still have to collapse it into one vector?</p>
 
 <p class="source">Leveraging Weakly-Aligned, User-Generated Data for Deep Learning Features (Binghamton, 2019)</p>
 
 <!--
-"My text model, from the dissertation: three windows, 300 characters each, 25% overlap, and anything longer truncated at 5,000 characters. The numbers were a reasonable response to a memory limit at the time, not a mistake."
+"This is not a slide about one bad chunker. Arbitrary user-generated text has to become something retrievable. A document may be a page, a thread, a message, or a transcript; then we choose sections, windows, or another unit that fits the model and the index. That choice carries the heading and the source link that let us put an answer back in context."
 
-"The durable problem isn't the numbers. It's that no fixed window knows what the later query will need. Any boundary you pick can split the evidence apart, and a different window just moves the split somewhere else. Next slide is what changes when you stop choosing the unit in advance: ColBERT changes when the unit gets chosen, from before the query to after it."
+"My dissertation pipeline made one such choice: three 300-character windows, 25 percent overlap, and a 5,000-character limit. Reasonable under the memory limit then. The durable design question is separate: after we have chosen the retrieval unit, must we pool all of its text into one vector before the query arrives?"
+
+"ColBERT still needs a passage boundary. It changes the second decision: it keeps token vectors within that chosen passage and lets the query do the matching. That is the handoff."
 -->
 
 ---
@@ -252,39 +262,55 @@ A photo has six tags. A document has ten thousand words. One vector has to speak
 <p class="source">ColBERT, 2020 (Fig. 2); ColBERTv2, 2022 (Table 4)</p>
 
 <!--
-"Panel a is everything so far: one vector each side, one dot product. Panel d keeps every token vector and does the matching late. No mean, no attention pooling, no chunk boundary picked before the query arrives — nothing chosen in advance. The document stays a set."
+"Panel a is everything so far: one vector each side, one dot product. Panel d keeps every token vector and does the matching late. The passage boundary was already chosen; the token detail inside it is not pooled away. The document stays a set."
 -->
 
 ---
 
 # ColPali: keep every patch, skip the text pipeline
 
-<p class="text-sm op-70 mb-2">The same idea on documents as images. Standard pipeline: OCR, layout detection, chunking, captioning, text embedding. ColPali: embed the page image, keep every patch, score with MaxSim. On ViDoRe, averaged over ten tasks: +14 points of nDCG@5 over the best text pipeline.</p>
+<p class="text-sm op-70 mb-2">The same idea on document images. Standard pipeline: OCR, layout detection, chunking, captioning, text embedding. ColPali instead represents each page as 1,024 patch vectors and scores query tokens against them with MaxSim. On ViDoRe, averaged over ten tasks: +14 points of nDCG@5 over the best text pipeline.</p>
 
 <img src="/figures/paper-colpali-pipeline.png" alt="standard OCR and chunking pipeline vs ColPali page-patch pipeline" class="max-h-70 mx-auto rounded bg-white" />
 
 <p class="source">ColPali, 2024 (Fig. 1; Table 2, CC0)</p>
 
 <!--
-"Documents as pictures. The top pipeline is what most document RAG looks like: OCR, layout, chunk, caption, embed, five hand-designed stages. The bottom one embeds the page and keeps a vector per patch: nDCG@5 81.3 against 67.0 for the best text pipeline, fourteen points, no text pipeline at all. That's the chunking slide, absorbed."
+"Documents as pictures. The top pipeline is what most document RAG looks like: OCR, layout, chunk, caption, embed, five hand-designed stages. The bottom representation keeps 1,024 vectors for the page, so a query can match words, layout, tables, and figures directly. nDCG@5 is 81.3 against 67.0 for the best text pipeline: fourteen points, no text pipeline at all."
+
+"That gain comes from letting every patch vote. The next slide asks the obvious serving question: does every patch need to survive in the index?"
 -->
 
 ---
 
-# Keeping every token helps. Now we have to serve it
+# ColPali keeps every patch. Does it need to?
 
-<p class="text-sm op-70 mb-2">SciFact, 300 queries. One 384-dim vector per document (bge-small) against one 96-dim vector per token (answerai-colbert-small, 236 tokens per document on average), both 33M-parameter encoders, exhaustive scoring.</p>
+<p class="text-sm op-70 mb-4">A page becomes 1,024 patch vectors — 257.5 KB of representation. That preserves layout and visual evidence; at corpus scale, it becomes an index we have to serve.</p>
 
-<img src="/figures/exp-e11-late-interaction.png" alt="nDCG@10 and Recall@100, and bytes per document, single vector vs late interaction" class="max-h-70 mx-auto rounded" />
+<div class="flex items-stretch justify-center gap-6 mt-6 text-center">
+  <div class="w-62 rounded-lg border border-orange-400/40 bg-orange-400/10 px-5 py-5">
+    <p class="font-bold text-orange-400">ColPali page</p>
+    <p class="text-4xl font-bold mt-3">1,024 patches</p>
+    <p class="text-sm op-60 mt-2">one vector per image patch<br>257.5 KB per page</p>
+  </div>
+  <div class="self-center text-2xl op-50">→</div>
+  <div class="w-62 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-5 py-5">
+    <p class="font-bold text-emerald-400">3× hierarchical pooling</p>
+    <p class="text-4xl font-bold mt-3">33% vectors</p>
+    <p class="text-sm op-60 mt-2">97.8% retrieval performance<br>still scored with MaxSim</p>
+  </div>
+</div>
 
-<p class="text-sm op-70 mt-2">nDCG@10: 0.713 → 0.746, keeping every token instead of one vector. Byte panel: raw float16, uncompressed. Not the production cost.</p>
+<p class="text-sm leading-tight mt-3">Pooling removes redundant patches, not the late-interaction rule. MUVERA uses one fixed-dimensional vector only to shortlist, then reranks with MaxSim.</p>
 
-<p class="source">own experiment, talk/experiments/e11_late_interaction.py; BEIR SciFact</p>
+<p class="source">ColPali, 2024 (Sec. 5.2, Fig. 3; Appendix B.3)</p>
 
 <!--
-"Now test that answer on SciFact, same size encoders. Keep every token and quality goes up three points of nDCG; recall and MRR move the same direction, 0.942 to 0.956 and 0.682 to 0.719."
+"The last slide got its quality by preserving 1,024 patch vectors for every page. That is 257.5 kilobytes before the index has done any work. On a large corpus, the representation itself is now a serving decision."
 
-"The right-hand panel of the figure is the raw cost before anyone engineers it: sixty times the bytes in float16, no compression. That's not what it costs once someone builds an index for it — the next slide is how you pay for keeping every token inside an ordinary index, and what's in the backup is the fully engineered bill."
+"ColPali's own pooling ablation gives the answer. Similar patches — often blank background or repeated layout — can share a representative. Pool three-to-one and retain one third of the vectors while preserving 97.8 percent of retrieval performance."
+
+"This is not a return to one page vector: MaxSim still matches the query against a set of patch representatives. Pooling reduces the set. MUVERA changes the shortlist: one fixed-dimensional vector reaches the candidate pages, then MaxSim comes back for reranking."
 -->
 
 ---
@@ -504,34 +530,38 @@ One sentence: "A second network segments the scene, road, building, sky, tree, a
 
 ---
 
-# Smarter negatives change training, not serving
+# The hand-built part that survived: choosing negatives
+
+<p class="text-sm op-70 mb-2">DINOv2 absorbed the semantic branch. What remains useful is the learning signal: choose near-miss examples that force the model to learn the distinction.</p>
 
 <VprProgress />
 
 <p class="source">MixVPR, 2023; SALAD, 2023; CliqueMining, 2024; SelaVPR++, 2025</p>
 
 <!--
-"The thing that survived hardest wasn't in the architecture at all. Get smarter about which negative examples you show the model during training, same network, not one layer changed, and accuracy on the hardest seasonal benchmark jumps from seventy-six to ninety-one percent. That's a sampling trick, and a sampling trick is what I also had in that paper, in a footnote, as a detail."
+"DINOv2 absorbed the hand-built semantic representation. The part that survived was not another branch. It was the training question: which near-miss examples should force the model to learn the distinction?"
 
-"I found that out by going back and reading my own thesis."
+"SALAD to CliqueMining is the same network: no layer changed. Better negative selection raises the hard seasonal benchmark from 76 to 91 percent. That is learning structure — it shapes the loss signal, but it is not part of the representation the model produces."
 
-"But it's a training-time trick: it changes which pairs the loss sees, and it never touches what gets served. The next table is the other side of that line, what the index sees once the vector actually ships."
+"Keep that distinction in mind as we cross the deployment boundary."
 -->
 
 ---
 
-# After training, the index sets the serving rules
+# Once training ends, only the embedding ships
+
+<p class="text-sm op-70 mb-2">The sampler, loss, and curriculum do not deploy. The index receives one vector and an allowed similarity metric.</p>
 
 <IndexMetrics />
 
 <p class="source">FAISS wiki; DiskANN docs; Milvus 2.4 and 2.6.4 docs; Qdrant 1.10 notes; Elasticsearch 8.18 reference; Pinecone docs</p>
 
 <!--
-"The sampling trick from the last slide is invisible here. The index never sees which negatives trained the model; it only ever sees the vector's shape and the metric you search it with. Whatever structure survives training, or gets bent into a boundary trick, still has to clear this table."
+"Now we cross the deployment boundary. The sampler changed which pairs the model learned from, but it does not ship. The index receives only the resulting vector, its shape, and a similarity metric."
 
-"Source is the FAISS wiki, read directly: two metrics, L2 and inner product, cosine is normalize-then-inner-product. Same story everywhere: DiskANN three metrics, Milvus three plus Hamming."
+"Source is the FAISS wiki, read directly: two metrics, L2 and inner product; cosine is normalize-then-inner-product. Same story everywhere: DiskANN three metrics, Milvus three plus Hamming."
 
-"That's the vendor telling you: nobody ships a curved index, nobody ships a Wasserstein index. Every trick in this talk that survived, the sign flip, the re-embedding, the fixed-dimensional encoding, survived by fitting into this table."
+"That is the hard boundary. Nobody ships a curved or Wasserstein index. Every representation trick in this talk that survived — sign flip, re-embedding, fixed-dimensional encoding — survived by fitting into this table."
 -->
 
 ---
